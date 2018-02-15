@@ -1,0 +1,509 @@
+<?php
+/**
+ * @file Wcportal custom functionality
+ */
+define('ABOUT_US_RIGHT_PRESIDENT_NID', 5184);
+define('ABOUT_US_LEFT_PRESIDENT_NID', 5183);
+define('WCPORTAL_COMMUNITY_HOME_PATH', 'community');
+
+define('RESTAURANT_SUSHI_NEKO_NID', 1);
+define('RESTAURANT_MUSASHI_NID', 2);
+define('RESTAURANT_WILL_ROGERS_THEATRE_NID', 3);
+define('RESTAURANT_LOBBY_CAFE_BAR_NID', 4);
+define('RESTAURANT_TASTING_ROOM_NID', 5);
+define('RESTAURANT_COACH_HOUSE_NID', 6);
+
+
+
+module_load_include('inc', 'wcportal_custom', 'includes/wcportal_custom.progressive_dinner');
+module_load_include('inc', 'wcportal_custom', 'includes/wcportal_custom.rewards');
+module_load_include('inc', 'wcportal_custom', 'includes/wcportal_custom.form');
+
+
+/**
+ * Implements hook_menu().
+ */
+function wcportal_custom_menu() {
+  $items = array();
+
+  $items['calendar-event/%/%'] = array(
+    'title' => 'RCalendar event',
+    'page callback' => 'wcportal_custom_calendar_event',
+    'page arguments' => array(1, 2),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['admin/wcportal/config'] = array(
+    'title' => 'WCportal Configuration',
+    'description' => 'WCportal Configuration page',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wcportal_custom_site_setings_form'),
+    'access arguments' => array('administer content site configuration'),
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function wcportal_custom_permission() {
+  $return = array();
+
+  $return['wcportal_custom_show_all_taxonomy_edit_fields'] = array(
+    'title' => t('Show all taxonomy edit fields'),
+    'description' => t('Do not hide for user system taxonomy term fields like relation, weight. Display only Name.'),
+  );
+
+  return $return;
+}
+
+/**
+ * Show calendar event in popup
+ */
+function wcportal_custom_calendar_event($nid, $date) {
+  $node = node_load($nid);
+  if ($node) {
+    $node->display_popup_date = DateTime::createFromFormat('Y-m-d', $date);
+    $node_view = node_view($node, "calendar_popup");
+    print render($node_view);
+  }
+  die();
+}
+
+
+/**
+ * Implements hook_node_view().
+ */
+function wcportal_custom_node_view($node, $view_mode, $language) {
+  // add share email to social share block
+  if (($view_mode == 'teaser' && variable_get('social_share_teaser', 1)) || ($view_mode == 'full')) {
+    $enabledTypes = variable_get('social_share_node_types', array());
+    if (isset($enabledTypes[$node->type]) && ($enabledTypes[$node->type])) {
+      // get a list of enabled share links and generate them individually
+      if (isset($node->content['social_share'])) {
+
+        $mail_subject = t("I wanted you to see this site");
+        $mail_body = $node->title . "%0A%0a" . url("node/" . $node->nid, array("absolute" => TRUE));
+
+        $node->content['social_share'][] = array(
+          '#type' => 'link',
+          '#title' => 'Email',
+          '#href' => "mailto:?subject=" . $mail_subject . "&body=" . $mail_body,
+          '#options' => array("attributes" => array("class" => array("")))
+        );
+      }
+    }
+  }
+
+  if (($view_mode == 'full')) {
+    //redirect full nodes
+    switch ($node->type) {
+      case 'community':
+      case 'community_homepage':
+        drupal_goto(WCPORTAL_COMMUNITY_HOME_PATH);
+        break;
+      case 'about_us_gallery':
+        drupal_goto('about-us');
+        break;
+      case 'event':
+        $date_from = (isset($node->field_event_date_time['und'][0]['value'])) ? $node->field_event_date_time['und'][0]['value'] : "";
+        $time_from = strtotime($date_from);
+        $month_digits = date("Y-m", $time_from);
+        $day = date("d", $time_from);
+        $url = url("calendar/" . $month_digits . "/" . $node->nid . '/' . $day, array("absolute" => TRUE));
+        drupal_goto($url);
+        break;
+      case 'president':
+        drupal_goto('about-us');
+        break;
+      case 'progressive_dinner_slide':
+      case 'progressive_dinner_first':
+        if (function_exists("_mobile_tools_is_mobile_device")) {
+          $device = _mobile_tools_is_mobile_device();
+          if (isset($device['type']) && $device['type'] == 'mobile') {
+            // not use redirect.
+          }
+          else {
+            drupal_goto('progressive-dinner');
+          }
+        }
+        else {
+          drupal_goto('progressive-dinner');
+        }
+        break;
+      case 'progressive_dinner_your_reservat':
+        if (function_exists("_mobile_tools_is_mobile_device")) {
+          $device = _mobile_tools_is_mobile_device();
+          if (isset($device['type']) && $device['type'] == 'mobile') {
+            // not use redirect.
+          }
+          else {
+            drupal_goto('progressive-dinner', array('fragment' => 'reservation-form'));
+          }
+        }
+        else {
+          drupal_goto('progressive-dinner', array('fragment' => 'reservation-form'));
+        }
+        break;
+      case 'restaurant':
+        drupal_goto('<front>');
+        break;
+    }
+  }
+}
+
+//
+//function wcportal_custom_entity_view_mode_alter(&$view_mode, $context) {
+//  if ($context['entity_type'] == 'node' && $context['entity']->type == "rewards_card_members") {
+//    $view_mode = "mobile";
+//  }
+//
+//
+//
+//  // check if mobile and swith view mode
+////  if (module_exists("mobile_tools")) {
+////    $result = _mobile_tools_is_mobile_device();
+////    if (isset($result['type']) && $result['type'] == 'mobile') {
+////      switch ($vars['type']) {
+////        case 'rewards_card_members':
+////          $vars['view_mode'] = 'mobile';
+////          break;
+////      }
+////    }
+////  }
+//
+//}
+
+
+/**
+ * Implements template_preprocess_node().
+ */
+function wcportal_custom_preprocess_node(&$vars) {
+  switch ($vars['type']) {
+    case 'progressive_dinner_your_reservat':
+      $vars['reservation_form'] = drupal_get_form('wcportal_custom_progressive_dinner_reservation_form');
+
+      //HACK, Check form status messages, and print in template
+      //Because page messages prints before reservation_form generate validate messages
+      $vars['reservation_form_messages'] = theme('status_messages');
+
+      drupal_add_js(array('wcportal_custom' => array('dinner_reserved_days' => wcportal_custom_get_full_reserved_days())), 'setting');
+      break;
+  }
+}
+
+
+/**
+ * Implements hook_field_attach_form().
+ *
+ * Corrects #max_delta when we hide the blank field collection item.
+ *
+ * @see field_add_more_js()
+ * @see field_collection_field_widget_form()
+ */
+function wcportal_custom_field_attach_form($entity_type, $entity, &$form, &$form_state, $langcode) {
+  foreach (field_info_instances($entity_type, $form['#bundle']) as $field_name => $instance) {
+    $field = field_info_field($field_name);
+
+    if ($field['type'] == 'field_collection' && $field['settings']['hide_blank_items']
+      && field_access('edit', $field, $entity_type) && $instance['widget']['type'] == 'field_collection_table'
+    ) {
+
+      $element_langcode = $form[$field_name]['#language'];
+      if ($form[$field_name][$element_langcode]['#max_delta'] > 0) {
+        $form[$field_name][$element_langcode]['#max_delta']--;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_date_popup_process_alter().
+ */
+function wcportal_custom_date_popup_process_alter(&$element, &$form_state, $context) {
+  //remove date description for datepicker element
+  if (!empty($context['form']['#form_id']) && $context['form']['#form_id'] == 'wcportal_custom_progressive_dinner_reservation_form') {
+    if (!empty($element['#name']) && $element['#name'] == 'party[date]') {
+      $element['date']['#title'] = '';
+      if (isset($element['date']['#description'])) {
+        unset($element['date']['#description']);
+      }
+    }
+  }
+}
+
+/**
+ * Add wrappers to from element
+ * @param $element
+ * @param array $classes
+ * @param bool $removeTitle
+ * @param string $id
+ */
+function _wcportal_custom_form_add_wrapper(&$element, $classes = array(), $removeTitle = FALSE, $id = NULL) {
+  if ($removeTitle) {
+    $classes[] = "hide-title";
+  }
+
+  $id_string = !empty($id) ? ' id="' . $id . '" ' : '';
+
+  $element['#prefix'] = '<div ' . $id_string . 'class="' . implode(" ", $classes) . '">';
+  $element['#suffix'] = '</div>';
+}
+
+
+/**
+ * Implements hook_form_node_form_alter().
+ */
+function wcportal_custom_form_node_form_alter(&$form, &$form_state, $form_id) {
+  switch ($form_id) {
+    case 'easy_blog_post_node_form':
+      $form['author']['date']['#access'] = FALSE;
+      break;
+    case 'event_node_form':
+
+      $form['#attached']['js'][] = drupal_get_path('module', 'wcportal_custom') . '/js/wcportal_events.js';
+      $form['#attached']['js'][] = array(
+        'data' => array('wcportal_custom' => array('tasting_restaurant_id' => RESTAURANT_TASTING_ROOM_NID)),
+        'type' => 'setting',
+      );
+
+      $form['field_event_tasting_category']['#states'] = array(
+        'required' => array(
+          ':input[name="field_event_restaurant[und][' . RESTAURANT_TASTING_ROOM_NID . ']"]' => array('checked' => TRUE)
+        )
+      );
+      $form['field_event_price']['#states'] = array(
+        'required' => array(
+          ':input[name="field_event_restaurant[und][' . RESTAURANT_TASTING_ROOM_NID . ']"]' => array('checked' => TRUE)
+        )
+      );
+      $form['field_event_seats_available']['#states'] = array(
+        'required' => array(
+          ':input[name="field_event_restaurant[und][' . RESTAURANT_TASTING_ROOM_NID . ']"]' => array('checked' => TRUE)
+        )
+      );
+
+      $form['#validate'][] = 'wcportal_custom_events_tastingroom_required_validate';
+
+      break;
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function wcportal_custom_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+  switch ($form_id) {
+    case 'nodequeue_arrange_subqueue_form_3': // careers
+      if (in_array('manager', $user->roles)) {
+        $form['actions']['shuffle']['#access'] = FALSE;
+        $form['actions']['reverse']['#access'] = FALSE;
+        $form['actions']['clear']['#access'] = FALSE;
+        $form['add']['#access'] = FALSE;
+
+        if (isset($form['nodes']) && is_array($form['nodes'])) {
+          foreach ($form['nodes'] as $key => $node) {
+            if (isset($node['edit'])) {
+              unset($form['nodes'][$key]['edit']);
+            }
+            if (isset($node['remove'])) {
+              unset($form['nodes'][$key]['remove']);
+            }
+          }
+        }
+      }
+      break;
+    case "webform_client_form_157": // careers form
+      // add additional emails based on restorant key
+      $restorant_key = isset($form_state['input']['submitted']['choose_a_restaurant']['choose_a_restaurant_radios']) ? $form_state['input']['submitted']['choose_a_restaurant']['choose_a_restaurant_radios'] : NULL;
+      if (!empty($restorant_key)) {
+        $addition_emails = _wcportal_careers_get_additional_emails($restorant_key);
+        $main_emails = variable_get('wc_shop_email_settings_all', '');
+
+        if (isset($form_state['build_info']['args'][0]->webform['emails'][1]['email'])) {
+          $emails = &$form_state['build_info']['args'][0]->webform['emails'][1]['email'];
+          $emails .= "," . $main_emails . "," . $addition_emails;
+          $emails = str_replace(",,", ",", $emails);
+          $emails = str_replace(", ,", ",", $emails);
+        }
+      }
+      break;
+    case 'taxonomy_form_term':
+      if (!user_access('wcportal_custom_show_all_taxonomy_edit_fields')) {
+        $form['relations']['#access'] = FALSE;
+        $form['description']['#access'] = FALSE;
+        $form['path']['#access'] = FALSE;
+      }
+      break;
+    case "bean_form":
+      if (user_access('administrator')) {
+        $form['revision']['#access'] = TRUE;
+      }
+      else {
+        $form['revision']['#access'] = FALSE;
+      }
+      break;
+  }
+}
+
+/**
+ * Additional validation for tasting room events.
+ */
+function wcportal_custom_events_tastingroom_required_validate($form, $form_state) {
+
+  $is_tastingroom_event = FALSE;
+  $is_private_event = FALSE;
+
+  if (isset($form_state['values']['field_event_reservation_status'][LANGUAGE_NONE][0]['value']) && $form_state['values']['field_event_reservation_status'][LANGUAGE_NONE][0]['value'] == 'Private Event'){
+    $is_private_event = TRUE;
+  }
+
+  if (!empty($form_state['values']['field_event_restaurant'][LANGUAGE_NONE])) {
+    foreach ($form_state['values']['field_event_restaurant'][LANGUAGE_NONE] as $value) {
+      if ($value['target_id'] == RESTAURANT_TASTING_ROOM_NID) {
+        $is_tastingroom_event = TRUE;
+        break;
+      }
+    }
+  }
+
+  if ($is_tastingroom_event && !$is_private_event) {
+    if (empty($form_state['values']['field_event_price'][LANGUAGE_NONE][0]['value'])) {
+      form_error($form['field_event_price'], t('For The Tasting Room events "@name" field is required', array('@name' => $form['field_event_price'][LANGUAGE_NONE]['#title'])));
+    }
+    if (empty($form_state['values']['field_event_seats_available'][LANGUAGE_NONE][0]['value'])) {
+      form_error($form['field_event_seats_available'], t('For The Tasting Room events "@name" field is required', array('@name' => $form['field_event_seats_available'][LANGUAGE_NONE]['#title'])));
+    }
+  }
+}
+
+/**
+ * Get emails by careers key
+ *
+ * @param $type
+ * @return null|string
+ */
+function _wcportal_careers_get_additional_emails($key) {
+  $emails = "";
+  switch ($key) {
+    case "sushi neco":
+      $emails = variable_get("wc_shop_email_settings_sushineko", "");
+      break;
+    case "will rogers theatre":
+      $emails = variable_get("wc_shop_email_settings_wrt", "");
+      break;
+    case "the tasting room":
+      $emails = variable_get("wc_shop_email_settings_tasting_room", "");
+      break;
+    case "musashi's":
+      $emails = variable_get("wc_shop_email_settings_musashis", "");
+      break;
+    case "the lobby cafe & bar":
+      $emails = variable_get("wc_shop_email_settings_lobby_bar", "");
+      break;
+    case "the coach house":
+      $emails = variable_get("wc_shop_email_settings_coach_house", "");
+      break;
+    case "the hutch":
+      $emails = variable_get("wc_shop_email_settings_hutch", "");
+      break;
+  }
+  return $emails;
+}
+
+
+/**
+ * Implements hook_block_info().
+ */
+function wcportal_custom_block_info() {
+  $blocks['wcportal_custom_rcm'] = array(
+    'info' => t('Rewards Card Members form'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function wcportal_custom_block_view($delta = '') {
+  // Check if the current user has access.
+  switch ($delta) {
+    case 'wcportal_custom_rcm':
+      $block['subject'] = t('Enroll Online');
+      $block['content'] = wcportal_custom_rewards_card_member_block();
+      return $block;
+      break;
+  }
+}
+
+
+/**
+ * This will change the date format on all views-exposed forms
+ */
+function wcportal_custom_form_views_exposed_form_alter(&$form, $form_state) {
+  if ($form['#form_id'] == "views_exposed_form") {
+    // manage events: change date format
+    if (isset($form['field_event_date_time_value'])) {
+      $form['field_event_date_time_value']['min']['#date_format'] = 'm/d/Y';
+      $form['field_event_date_time_value']['max']['#date_format'] = 'm/d/Y';
+    }
+  }
+
+}
+
+
+/**
+ * hook_wc_events_get_entities_alter().
+ */
+function wcportal_custom_get_events_entities_alter(&$query, $event_type, $event_date) {
+  //here you can alter query for different event types
+}
+
+/**
+ * Implements hook_admin_menu_output_alter().
+ */
+function wcportal_custom_admin_menu_output_alter(&$content) {
+  if (!user_access('menu access admin index item')) {
+    if (!empty($content['menu']['admin/index'])) {
+      unset($content['menu']['admin/index']);
+    }
+  }
+}
+
+/**
+ * Implements template_preprocess_page().
+ */
+function wcportal_custom_preprocess_page(&$vars) {
+  if(function_exists('mobile_tools_is_mobile_device')) {
+    $mobile = mobile_tools_is_mobile_device();
+    if (isset($mobile['type']) && $mobile['type'] == "mobile") {
+      //top image - mobile
+      $button_fid = variable_get('wc_top_mobile_image_fid', '');
+      $map_fid = variable_get('wc_top_map_mobile_image_fid', '');
+
+      if (!empty($button_fid) && !empty($map_fid)) {
+        $button_file = file_load($button_fid);
+        $map_file = file_load($map_fid);
+        if ($button_file && $map_file) {
+          $vars['top_image_file'] = file_create_url($button_file->uri);
+          $vars['top_image_link'] = file_create_url($map_file->uri);
+        }
+      }
+    }
+    else {
+      //top image - desctop
+      $image_fid = variable_get('wc_top_image_fid', '');
+      $image_link_url = variable_get('wc_top_image_link', 'http://www.westernconceptsdining.com/westfest');
+      if (!empty($image_fid) && !empty($image_link_url)) {
+        $image_file = file_load($image_fid);
+        if ($image_file) {
+          $vars['top_image_file'] = file_create_url($image_file->uri);
+          $vars['top_image_link'] = $image_link_url;
+        }
+      }
+    }
+  }
+}

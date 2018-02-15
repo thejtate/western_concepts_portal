@@ -1,0 +1,19 @@
+.b-nav {
+
+  a {
+    text-decoration: none;
+  }
+
+  .menu {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+
+    a {
+      display: block;
+    }
+  }
+
+  @import "top-nav";
+  @import "bot-nav";
+}

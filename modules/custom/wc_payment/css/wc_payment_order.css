@@ -1,0 +1,67 @@
+/* Order */
+.wc-payment-order-table{
+    width: 100%;
+    clear: both;
+}
+
+.wc-payment-order-table .order-table{
+    width: 100%;
+    border: 1px solid gray;
+}
+
+.wc-payment-order-table .order-table thead th{
+    background-color: gray;
+    color: white;
+}
+
+.wc-payment-order-table .order-table tbody tr td{
+    border-bottom: 1px solid #808080;
+    border-right: 1px solid #808080;
+}
+
+.wc-payment-order-table .order-table tbody tr.order-total td{
+    background-color: #d3d3d3;
+    color: #000000;
+    text-align: right;
+    font-weight: bold;
+    border-bottom: 0px;
+}
+
+
+.wc-payment-order-table .order-item .order-item-title{
+    font-weight: bold;
+}
+
+.wc-payment-order-table .order-item .order-item-color, .wc-payment-order-table .order-item .order-item-size{
+    color: #808080;
+}
+
+/* Billing/Shipping */
+.wc-payment-order-table .order-billing, .wc-payment-order-table .order-shipping{
+    border: 1px solid #808080;
+    padding: 20px;
+    margin-bottom: 10px;
+}
+
+.wc-payment-order-table .order-billing .order-billing-item, .wc-payment-order-table .order-shipping .order-shipping-item {
+   border-bottom: 1px solid #d3d3d3;
+}
+
+.wc-payment-order-table .order-billing .order-billing-item-title, .wc-payment-order-table .order-shipping .order-shipping-item-title {
+  font-weight: bold;
+}
+
+.wc-payment-order-table .order-billing .order-billing-item-value, .wc-payment-order-table .order-shipping .order-shipping-item-value{
+
+}
+
+
+/* Print */
+.order-print-btn{
+    cursor: pointer;
+    font-size: 0px;
+    background: url("../images/print_icon.png");
+    width: 32px;
+    height: 32px;
+    float: right;
+}

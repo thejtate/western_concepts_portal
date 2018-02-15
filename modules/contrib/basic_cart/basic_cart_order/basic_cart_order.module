@@ -1,0 +1,207 @@
+<?php
+/**
+ * @file
+ * Code for the Basic Cart Order feature.
+ */
+
+include_once 'basic_cart_order.features.inc';
+
+/**
+ * Implements hook_node_view().
+ */
+function basic_cart_order_view($node) {
+  $oid = $node->nid;
+  // Getting the order products.
+  $order_products = db_select('basic_cart_order_node')
+                      ->fields('basic_cart_order_node')
+                      ->condition('oid', $oid)
+                      ->execute()->fetchAll();
+  // Building the products array.
+  if (is_array($order_products)) {
+    $products = array();
+    foreach ($order_products as $product) {
+      $p = node_load($product->nid);
+      $p->basic_cart_quantity = $product->quantity;
+      // Price in a nicer form.
+      $price = field_get_items('node', $p, 'price');
+      $price = isset($price[0]['value']) ? check_plain($price[0]['value']) : '';
+      $p->price = basic_cart_price_format($price);
+      $products[] = $p;
+    }
+  }
+  // Building the order variables.
+  $order = node_load($oid);
+  // Name.
+  $name = check_plain($order->title);
+  // Email.
+  $email = field_get_items('node', $order, 'field_email');
+  $email = isset($email[0]['value']) ? check_plain($email[0]['value']) : '';
+  // Phone.
+  $phone = field_get_items('node', $order, 'field_phone');
+  $phone = isset($phone[0]['value']) ? check_plain($phone[0]['value']) : '';
+  // City.
+  $city = field_get_items('node', $order, 'field_city');
+  $city = isset($city[0]['value']) ? check_plain($city[0]['value']) : '';
+  // Zip Code.
+  $zipcode = field_get_items('node', $order, 'field_zipcode');
+  $zipcode = isset($zipcode[0]['value']) ? check_plain($zipcode[0]['value']) : '';
+  // Adsress.
+  $address = field_get_items('node', $order, 'field_address');
+  $address = isset($address[0]['value']) ? check_plain($address[0]['value']) : '';
+  // Message.
+  $message = field_get_items('node', $order, 'body');
+  $message = isset($message[0]['value']) ? check_plain($message[0]['value']) : '';
+  // Total price.
+  $total_price = field_get_items('node', $order, 'field_total_price');
+  $total_price = isset($total_price[0]['value']) ? check_plain($total_price[0]['value']) : '';
+  $total_price = basic_cart_price_format($total_price);
+  // VAT.
+  $vat = NULL;
+  $vat_is_enabled = (int) variable_get('basic_cart_vat_state');
+  if (!empty ($vat_is_enabled) && $vat_is_enabled) {
+    $vat = field_get_items('node', $order, 'vat');
+    $vat = isset($vat[0]['value']) ? check_plain($vat[0]['value']) : '';
+    $vat = basic_cart_price_format($vat);
+  }
+  
+  // Hide field data.
+  unset($node->content['field_email']);
+  unset($node->content['field_phone']);
+  unset($node->content['field_city']);
+  unset($node->content['field_zipcode']);
+  unset($node->content['field_address']);
+  unset($node->content['field_total_price']);
+  // Page title.
+  $title = t('Order ID: @oid', array('@oid' => $oid));
+  drupal_set_title($title);
+  
+  return theme('basic_cart_order_details', array(
+    'name' => $name,
+    'email' => $email,
+    'phone' => $phone,
+    'city' => $city,
+    'zipcode' => $zipcode,
+    'address' => $address,
+    'message' => $message,
+    'products' => $products,
+    'total_price' => $total_price,
+    'vat' => $vat,
+    'timestamp' => $node->created,
+  ));
+}
+
+/**
+ * Implements hook_menu().
+ */
+function basic_cart_order_menu() {
+  $items = array();
+  $items['admin/structure/orders/%node'] = array(
+    'title' => 'Basic Cart Orders',
+    'page callback' => 'basic_cart_order_view',
+    'page arguments' => array(3),
+    'access arguments' => array('view basic cart orders'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function basic_cart_order_theme() {
+  return array(
+    'basic_cart_order_details' => array(
+      'template' => 'basic_cart_order_details',
+      'variables' => array(
+        'name' => NULL,
+        'email' => NULL,
+        'phone' => NULL,
+        'city' => NULL,
+        'zipcode' => NULL,
+        'address' => NULL,
+        'message' => NULL,
+        'products' => NULL,
+        'total_price' => NULL,
+        'vat' => NULL,
+        'timestamp' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
+ * Registers a new basic cart order to the database.
+ *
+ * @param string $name
+ *   The customer's name.
+ * @param string $email
+ *   The customer's email address.
+ * @param array $order_details
+ *   The rest of the customer's data (phone, address, message). Non mandatory fields.
+ */
+function basic_cart_order_register_order($name, $email, $order_details=array()) {
+  $cart = basic_cart_get_cart();
+  if (!is_array($cart)) {
+    return NULL;
+  }
+  // Registering the new order to the database.
+  $node = new stdClass();
+  $node->type = 'order';
+  node_object_prepare($node);
+  // Title, mandatory field.
+  $node->title = $name;
+  $node->language = LANGUAGE_NONE;
+  // Body.
+  if (isset($order_details['message'])) {
+    $node->body[$node->language][0]['value'] = $order_details['message'];
+  }
+  else {
+    $node->body[$node->language][0]['value'] = '';
+  }
+  // Email, mandatory field.
+  $node->field_email[$node->language][0]['value'] = $email;
+  // Phone.
+  if (isset($order_details['phone'])) {
+    $node->field_phone[$node->language][0]['value'] = $order_details['phone'];
+  }
+  // Phone.
+  if (isset($order_details['city'])) {
+    $node->field_city[$node->language][0]['value'] = $order_details['city'];
+  }
+  // Phone.
+  if (isset($order_details['zipcode'])) {
+    $node->field_zipcode[$node->language][0]['value'] = $order_details['zipcode'];
+  }
+  // Address.
+  if (isset($order_details['address'])) {
+    $node->field_address[$node->language][0]['value'] = $order_details['address'];
+  }
+  // Total price.
+  if (isset($order_details['total_price'])) {
+    $node->field_total_price[$node->language][0]['value'] = $order_details['total_price'];
+  }
+  else {
+    $price = basic_cart_get_total_price();
+    $node->field_total_price[$node->language][0]['value'] = $price->total;
+  }
+  // VAT.
+  $vat_is_enabled = (int) variable_get('basic_cart_vat_state');
+  if (!empty ($vat_is_enabled) && $vat_is_enabled) {
+    $node->vat[$node->language][0]['value'] = $price->vat;
+  }
+  
+  // Registering order.
+  node_save($node);
+  // Now we have a node ID, we need to save the associated products.
+  $oid = $node->nid;
+  foreach ($cart as $nid => $n) {
+    $record = array (
+      'oid' => $oid,
+      'nid' => $n->nid,
+      'quantity' => $n->basic_cart_quantity,
+    );
+    drupal_write_record('basic_cart_order_node', $record);
+  }
+  
+  return $node;
+}

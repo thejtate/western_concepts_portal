@@ -1,0 +1,247 @@
+.form {
+
+  label {
+    font-size: 9px;
+    color: #b3b0aa;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-family: $tt-6;
+    letter-spacing: 1px;
+  }
+
+  .form-field {
+    margin-bottom: 5px;
+  }
+
+  .form-item {
+    margin: 0;
+  }
+
+  .form-wrapper {
+    border: none;
+    margin: 0 0 20px;
+    padding: 0;
+  }
+
+  legend {
+    font-family: $reverie-italicitalic;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .form-text, .form-textarea  {
+    background: #fffef7;
+    border: none;
+    width: 100%;
+    outline: none;
+    text-transform: uppercase;
+    @include box-sizing(border-box);
+    font-size: 10px;
+    font-family: $tt-6;
+    height: 26px;
+    padding: 0 8px;
+  }
+
+  .form-field-text {
+    margin-bottom: 9px;
+  }
+
+  &.form-site-custom {
+
+    .field-state, .field-zip, .field-date, .field-code {
+      float: left;
+    }
+
+    .field-state, .field-date {
+      width: 65%;
+      @include box-sizing(border-box);
+      padding-right: 10px;
+    }
+
+    .field-zip, .field-code {
+      width: 35%;
+      @include clearfix;
+    }
+
+    .field-code {
+      margin-top: 16px;
+    }
+  }
+
+  &.form-reservation {
+
+    .field-name-party, .field-time, .field-date, .field-guests, .field-total {
+
+      label {
+        font-family: $bitter-italic;
+        font-weight: normal;
+        color: #595957;
+        text-transform: none;
+      }
+    }
+
+    .field-name, .field-phone {
+      width: 52%;
+    }
+
+    .field-last-name, .field-email {
+      width: 48%;
+    }
+
+    .field-name-party, .field-date {
+      width: 59%;
+    }
+
+    .field-time {
+      width: 35%;
+    }
+
+    .field-city, .field-card, .field-state  {
+      width: 36%;
+    }
+
+    .field-zip {
+      width: 28%;
+    }
+
+    .field-name-card {
+      width: 64%;
+    }
+
+    .field-name-party,
+    .field-time, .field-date,
+    .field-name, .field-last-name,
+    .field-phone, .field-email,
+    .field-city, .field-state, .field-zip,
+    .field-type, .field-expiration-date,
+    .field-card, .field-name-card {
+      float: left;
+    }
+
+    .field-name-party, .field-date, .field-name, .field-phone, .field-city, .field-state, .field-card, .field-type {
+      @include box-sizing(border-box);
+      padding-right: 10px;
+    }
+
+    .field-time, .field-last-name, .field-email, .field-zip, .field-name-card, .field-expiration-date, .field-guests {
+      @include clearfix;
+    }
+
+    .field-total {
+
+      .form-text {
+        background: #595957;
+        color: #ebeadf;
+        width: 60px;
+      }
+    }
+
+    .fieldset-description {
+      color: #3f3f3f;
+    }
+
+    .container-inline-date {
+
+      & > .form-item {
+        display: block;
+      }
+
+      .form-item .form-item {
+        float: none;
+      }
+
+      .date-padding {
+        padding: 0;
+        float: none;
+      }
+
+      .form-text {
+        width: 100%;
+      }
+    }
+  }
+
+  &.form-checkout {
+
+    .btn-wrapp {
+      @include clear-box;
+    }
+
+    .form-text {
+      background: #f2f1e6;
+    }
+
+    .field-city, .field-state,
+    .field-zip, .field-phone {
+      width: 50%;
+    }
+
+    .field-city, .field-state,
+    .field-zip, .field-phone,
+    .field-type, .field-expiration-date,
+    .field-card, .field-code {
+      float: left;
+      @include box-sizing(border-box);
+    }
+
+    .field-type {
+      width: 55%;
+    }
+
+    .field-card {
+      width: 65%;
+    }
+
+    .field-code {
+      width: 35%;
+    }
+
+    .field-expiration-date {
+      width: 45%;
+    }
+
+    .field-city, .field-zip, .field-type, .field-card {
+      padding-right: 5px;
+    }
+
+    .field-state, .field-phone, .field-expiration-date, .field-code {
+      padding-left: 5px;
+    }
+
+    .field-billing-address {
+
+      .form-radio {
+        opacity: 0;
+        background: none;
+        height: 28px;
+        width: 28px;
+        cursor: pointer;
+      }
+
+      .form-item {
+        @include clear-box;
+        position: relative;
+      }
+
+      label {
+        padding-left: 40px;
+        line-height: 31px;
+      }
+
+      .checker {
+        position: absolute;
+        left: 0;
+        top: 0;
+
+        span {
+          display: block;
+          @include oneline-sprite-box($icons, icon-checkbox);
+
+          &.checked {
+            background: image-url("icons/icon-checkbox-active.png");
+          }
+        }
+      }
+    }
+  }
+}

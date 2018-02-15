@@ -1,0 +1,52 @@
+.outer-wrapper {
+  min-height: 100%;
+}
+
+.structs-wrapper {
+  width: $width_content;
+  margin: 0 auto;
+  padding: 0 8px 40px;
+}
+
+.clearfix {
+  *zoom: 1;
+  &:before,
+  &:after {
+    display: table;
+    content: "";
+    line-height: 0;
+  }
+  &:after {
+    clear: both;
+  }
+}
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+.clear-right {
+  clear: right;
+}
+.clear-left {
+  clear: left;
+}
+
+hr {
+  display: block;
+  border: 0 none;
+  clear: both;
+  height: 0px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.bg_transparent {
+  background: rgba(0, 0, 0, 0.4) url("../images/bg/bg_transparent_b.png") 0 0 repeat  !important;
+}

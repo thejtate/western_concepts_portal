@@ -1,0 +1,134 @@
+.popup_calendar {
+  width: 440px;
+  height: 440px;
+  @include border-radius(50%);
+  position: relative;
+  @include box-shadow(-6px 4px 18px rgba(0, 0, 0, 0.5));
+  margin: 20px 20px;
+  &.popup_sushi_neko {
+    background: #E6C10B;
+  }
+  &.popup_musashis {
+    background: #CC2929;
+  }
+  &.popup_will_rogers_theatre {
+    background: #2DA7B3;
+  }
+  &.popup_lobby_cafe_bar {
+    background: #62B37D;
+  }
+  &.popup_tasting_room {
+    background: #D97D21;
+  }
+  &.popup_coach_house {
+    background: #B3628A;
+  }
+  .date-popup {
+    width: 106px;
+    height: 106px;
+    @include border-radius(50%);
+    background: #000;
+    position: absolute;
+    top: -0;
+    left: -20px;
+    .day,
+    .month {
+      display: block;
+      text-align: center;
+      font-family: $tt_4;
+
+    }
+    .day {
+      color: #999794;
+      @include font-size(14px);
+      text-transform: uppercase;
+      line-height: 1;
+      padding: 20px 0 0;
+    }
+    .month {
+       @include font-size(38px);
+      color: #fffef7;
+      font-family: $tt_2;
+      line-height: 1;
+    }
+  }
+  .title-header-popup {
+    padding: 38px 20px 0 20px;
+    h3 {
+      margin: 0;
+      text-align: center;
+      font-family: $copse_regular;
+      font-weight: normal;
+      @include font-size(26px);
+      position: relative;
+      padding: 0 0 10px 0;
+      line-height: 1;
+      &:before {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 50%;
+        margin-left: -100px;
+        bottom: 0;
+        width: 200px;
+        height: 1px;
+        background: #000;
+      }
+    }
+  }
+  .title-text-popup {
+    h3 {
+      @include font-size(26px);
+      font-family: $reverie_italicitalic;
+      font-weight: normal;
+      letter-spacing: -1px;
+      text-align: center;
+      padding: 34px 10px 10px;
+      color: #fff;
+    }
+  }
+  .time-popup {
+    text-align: center;
+    font-family: $tt_6;
+    text-transform: uppercase;
+    @include font-size(17px);
+  }
+  .text-popup {
+    text-align: center;
+    font-size: 12px;
+    line-height: 20px;
+    height: 110px;
+    overflow: hidden;
+    margin: 0 34px;
+    p {
+
+      max-height: 64px;
+      overflow: hidden;
+      margin: 0;
+    }
+    a {
+      color: inherit;
+      font-family: $bitter_italic;
+    }
+  }
+  .btn-wrapper {
+    text-align: center;
+    padding: 20px;
+  }
+  a {
+    &.btn-close {
+      font-family: $tt_4;
+      text-decoration: none;
+      display: inline-block;
+      color: #999794;
+      text-transform: uppercase;
+      @include font-size(12px);
+      background: #1e1e1e;
+      padding: 8px 20px;
+      line-height: 1;
+      &:hover {
+        color: #fff;
+      }
+    }
+  }
+}

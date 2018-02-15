@@ -1,0 +1,7 @@
+name = Wc Shop
+description = Western concepts portal shop
+core = 7.x
+package = Wc
+
+dependencies[] = wc_payment
+

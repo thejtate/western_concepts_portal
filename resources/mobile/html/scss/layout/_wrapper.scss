@@ -1,0 +1,17 @@
+.outer-wrapper {
+  min-width: $width;
+  min-height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.inner-wrapper {
+  min-height: 270px;
+}
+
+.content-wrapper {
+
+  .page-careers-mobile &, .page-store &, .page-about-us-mobile &, .page-rewards-card-members &, .page-progressive-dinner & {
+    padding: 12px;
+  }
+}

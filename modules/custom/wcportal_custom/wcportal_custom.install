@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * @file
+ * Install file for the wcportal_custom module.
+ */
+
+
+/**
+ * Implements hook_schema().
+ */
+function wcportal_custom_schema() {
+  $schema['dinner_reservation'] = array(
+    'description' => 'Dinner reservation information',
+    'fields' => array(
+      'id' => array(
+        'description' => 'The primary identifier for the dinner reservation.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'pid' => array(
+        'description' => 'The primary identifier for a paiment.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'party_date' => array(
+        'description' => 'The party date.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'guests_count' => array(
+        'description' => 'No. of guests',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'party_name' => array(
+        'description' => 'Name of party',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+     ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'pid' => array('pid'),
+    ),
+  );
+  return $schema;
+}
+
+

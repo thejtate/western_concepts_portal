@@ -1,0 +1,60 @@
+.footer {
+//  margin: -30px auto 0;
+//  display: none;
+  background: #000000;
+}
+
+.footer-inner {
+  margin: 0 auto;
+  width: $width_content;
+
+  .title {
+    color: #94702e;
+    font-size: 17px;
+    font-family: $reverie_italicitalic ;
+    margin-right: 20px;
+  }
+
+  .address {
+    color: #66635f;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .region-footer {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .link {
+    padding: 6px 20px 6px 45px;
+    color: #969592;
+    background: #3d3d3c;
+    text-transform: uppercase;
+    position: relative;
+    font-size: 11px;
+    text-decoration: none;
+    font-family: $tt_6;
+    letter-spacing: 2px;
+    margin-left: 25px;
+    @include transition(all .3s);
+
+    &:before {
+      @include oneline-sprite-box($icons, icon);
+      @include pseudo-block($left: 16px, $top: 50%);
+      margin-top: -8px;
+    }
+
+    &:hover {
+      color: #3d3d3c;
+      background: #969592;
+    }
+  }
+}
+
+.content-footer {
+  padding: 30px 0;
+  text-align: center;
+}
+

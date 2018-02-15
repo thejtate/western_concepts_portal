@@ -1,0 +1,199 @@
+<?php
+/**
+ * @file Wc shop custom functionality
+ */
+
+
+module_load_include("inc","wc_shop", "wc_shop.theme");
+module_load_include("inc","wc_shop", "wc_shop.cart");
+module_load_include("inc","wc_shop", "wc_shop.checkout");
+module_load_include("inc","wc_shop", "wc_shop.mail");
+
+
+/**
+ * Implements hook_menu().
+ */
+function wc_shop_menu() {
+  $items = array();
+
+  $items['admin/config/wc_shop'] = array(
+    'title' => 'WC Shop',
+    'position' => 'right',
+    'weight' => -5,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer wc shop module'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/wc_shop/settings'] = array(
+    'title' => 'Store Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wc_shop_admin_settings'),
+    'access arguments' => array('administer wc shop module'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'wc_shop.admin.inc',
+  );
+
+  $items['admin/config/wc_shop/clear'] = array(
+    'title' => 'Clear Store Cache',
+    'page callback' => 'wc_shop_clear_cart',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'wc_shop.cart.inc',
+  );
+
+
+  $items['wc-shop/cart/remove/%'] = array(
+    'title' => 'Remove item from cart',
+    'page callback' => 'wc_shop_cart_remove',
+    'page arguments' => array(3),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+    'file' => 'wc_shop.cart.inc',
+  );
+
+  $items['wc-shop/checkout'] = array(
+    'title' => 'Checkout',
+    'description' => 'Checkout.',
+    'page callback' => 'wc_shop_checkout',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+    'file' => 'wc_shop.cart.inc',
+  );
+
+  return $items;
+}
+
+
+/**
+ * Implements hook_permission().
+ * @return array
+ */
+function wc_shop_permission() {
+  return array(
+    'administer wc shop module' => array(
+      'title' => t('Administer Wc Shop module'),
+      'description' => t('Perform administration tasks for Wc Shop module.'),
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_block_info().
+ */
+function wc_shop_block_info() {
+  $blocks['wc_shop_cart'] = array(
+    'info' => t('Shopping cart'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function wc_shop_block_view($delta = '') {
+  // Check if the current user has access.
+  switch ($delta) {
+    case 'wc_shop_cart':
+        $cart = wc_shop_get_cart();
+        $block['subject'] = t('Your cart');
+        $block['content'] = theme('wc_shop_cart_block', array('cart' => $cart));
+        return $block;
+      break;
+  }
+}
+
+/**
+ * Implements hook_node_view().
+ */
+function wc_shop_node_view($node, $view_mode, $langcode) {
+  // Check if the current user has access to basic cart.
+  if ($node->type == "store_product" && $view_mode == "product_shop") {
+    $add_to_cart_form = drupal_get_form("wc_shop_add_to_cart_form_$node->nid", $node);
+    $node->content['wc_shop_add_to_cart'] = $add_to_cart_form;
+  }
+
+  if ($node->type == "store_product" && $view_mode == "full") {
+    drupal_goto("shop");
+  }
+
+}
+
+
+function wc_shop_forms($form_id, $args) {
+  $forms = array();
+  if (substr($form_id, 0, 25) == 'wc_shop_add_to_cart_form_') {
+    $forms['wc_shop_add_to_cart_form_' . $args[0]->nid] = array(
+      'callback' => 'wc_shop_add_to_cart_form',
+    );
+  }
+  return $forms;
+}
+
+
+/**
+ * Sites list
+ *
+ * @return array
+ */
+function _wc_shop_get_sites() {
+  return array(
+    'm' => t('Musashi’s'),
+    's' => t('Sushineko'),
+    'w' => t('Will Rogers Theatre'),
+    't' => t('Tasting room'),
+    //'c' => t('Coach house'),
+    'l' => t('Lobby bar'),
+    'h' => t('The Hutch'),
+  );
+}
+
+/**
+ * Get titles by site key
+ *
+ * @param $type
+ * @return null|string
+ */
+function _wc_shop_get_titles_by_key($type){
+  $sites = _wc_shop_get_sites();
+  return (isset($sites[$type])) ? $sites[$type] : $type;
+}
+
+/**
+ * Get emails by site key
+ *
+ * @param $type
+ * @return null|string
+ */
+function _wc_shop_get_emails_by_key($type){
+  $emails = "";
+  switch($type){
+    case "m":
+      $emails = variable_get("wc_shop_email_settings_musashis", "");
+      break;
+    case "s":
+      $emails = variable_get("wc_shop_email_settings_sushineko", "");
+      break;
+    case "w":
+      $emails = variable_get("wc_shop_email_settings_wrt", "");
+      break;
+    case "t":
+      $emails = variable_get("wc_shop_email_settings_tasting_room", "");
+      break;
+    case "c":
+      $emails = variable_get("wc_shop_email_settings_coach_house", "");
+      break;
+    case "l":
+      $emails = variable_get("wc_shop_email_settings_lobby_bar", "");
+      break;
+    case "h":
+      $emails = variable_get("wc_shop_email_settings_hutch", "");
+      break;
+  }
+  return $emails;
+}
+
+
+

@@ -1,0 +1,15 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the token module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function wc_shop_uninstall(){
+  $variables = array("wc_shop_settings_shipping_price", "store_check_balance_link");
+  foreach($variables as $var) {
+    variable_del($var);
+  }
+}

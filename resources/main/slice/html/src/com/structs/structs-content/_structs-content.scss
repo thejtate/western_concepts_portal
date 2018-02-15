@@ -1,0 +1,326 @@
+.structs-content {
+
+}
+
+.outer-wrapper {
+
+}
+
+.page-home {
+  .outer-wrapper {
+    overflow: hidden;
+  }
+}
+
+.page-blog {
+  background: #553311 url('../images/bg/tile_wood.jpg') 50% 50% repeat;
+}
+
+.page-community {
+  background: #193739 url('../images/bg/tile_deco.jpg') 50% 50% repeat;
+  .inner-wrapper {
+    .content-item {
+    }
+    .title-content {
+      min-height: 0;
+      margin-bottom: 30px;
+    }
+    .text-content {
+      margin-bottom: 30px;
+    }
+    .images {
+      width: 416px;
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+  }
+
+}
+
+.page-con {
+  .inner-wrapper {
+    .content-item {
+      padding: 24px 40px 24px 40px !important;
+
+      &:before {
+        left: 40px !important;
+      }
+    }
+
+  }
+
+  .title-content {
+    h2 {
+      font-family: $din-bold;
+      font-size: 36px;
+      text-transform: uppercase;
+      text-align: center;
+      margin: 0;
+      padding: 50px;
+    }
+  }
+
+  .content-item{
+    text-align: center;
+
+    .construction-map {
+      background: #c69846;
+      padding: 17px;
+      display: inline-block;
+      @include border-radius(15px);
+      @include box-shadow(0px 0px 50px -6px #363636);
+
+      img{
+        display: block;
+      }
+    }
+
+    h4{
+      font-family: $din-regular;
+      font-size: 28px;
+      margin: 50px 0;
+      padding: 0 250px;
+      line-height: 40px;
+    }
+
+    .text{
+      width: 725px;
+      margin: 0 auto;
+
+      p{
+        text-align: left;
+        font-size: 18px;
+        font-family: $din-regular;
+        margin: 30px 0;
+      }
+    }
+  }
+
+}
+
+.page-store {
+  background: #193739 url('../images/bg/tile_arches.jpg') 50% 50% repeat;
+  .inner-wrapper {
+    .content-item {
+      padding: 24px 40px 24px;
+      &:before {
+        left: 40px;
+      }
+      .title-content {
+        min-height: 0;
+        margin-bottom: 20px;
+      }
+    }
+    .sidebar-right {
+      width: 282px;
+      .title-sidebar {
+        border-bottom: none;
+      }
+      + .content-wrapper {
+        width: 702px;
+      }
+    }
+  }
+  .content-item {
+    .title-content {
+      border-bottom: 1px solid #CCC9C2;
+      overflow: hidden;
+      //@include clear-box();
+      h3 {
+        border-bottom: none;
+        float: left;
+      }
+      .btn-wrapp {
+        margin-right: 0;
+        padding: 16px 0 10px;
+
+      }
+      .btn-submit {
+        margin-right: 0;
+        a {
+          color: #fff;
+        }
+      }
+    }
+  }
+
+}
+
+.page-community,
+.page-careers {
+  .inner-wrapper {
+    .content-item {
+      padding: 24px 50px;
+      &:before {
+        left: 50px;
+        right: 50px;
+      }
+    }
+  }
+}
+
+.page-careers {
+  background: #4d4d4d url('../images/bg/tile_grayDiamonds.jpg') 50% 50% repeat;
+
+}
+
+.page-calendar {
+  background: #4d4d4d url('../images/bg/tile_stripes.jpg') 50% 50% repeat;
+
+}
+
+.page-rewards-card-members {
+  background: #4d4d4d url('../images/bg/bg_reward.jpg') 50% 50% no-repeat fixed;
+  @include background-size(100% 100%);
+  .inner-wrapper {
+    .content-item {
+      padding: 24px 40px 24px;
+      &:before {
+        left: 40px;
+      }
+      .title-content {
+        min-height: 0;
+        margin-bottom: 20px;
+      }
+      .text-content {
+        overflow: visible;
+      }
+    }
+    .sidebar-right {
+      width: 340px;
+      + .content-wrapper {
+        width: 654px;
+      }
+    }
+  }
+}
+
+.form-careers {
+  .title-form {
+    h1 {
+      @include font-size(42px);
+    }
+  }
+}
+
+.inner-wrapper {
+  width: 1062px;
+  margin: 42px auto 0;
+  .sidebar-right {
+    width: 234px;
+    float: right;
+    + .content-wrapper {
+      width: 780px;
+    }
+
+  }
+  .content-wrapper {
+
+  }
+  .content-item {
+    background: #fffef7;
+    padding: 24px 40px 24px 98px;
+    margin: 0 0 54px 0;
+    position: relative;
+    @include box-shadow(0 0 10px #000);
+    @include box-sizing(border-box);
+    &:before {
+      @include pseudo-block($top: 0, $left: 98px, $right: 40px);
+      background: url("../images/bg/bg_content_top.png") 50% 50% repeat-x;
+      height: 24px;
+
+    }
+    &:after {
+      @include pseudo-block($bottom: -5px, $left: 0, $right: 0);
+      background: url("../images/bg/bg_content_bottom.png") 50% 50% repeat-x;
+      height: 5px;
+    }
+  }
+}
+
+.page-about-us {
+  background: image-url("bg/bg_slider-about-us.jpg") no-repeat fixed 50% 50%;
+  @include background-size(100% 100%);
+  min-height: 1400px;
+
+  .inner-wrapper {
+
+    .content-item {
+      padding: 32px;
+      margin: 0;
+
+      .title-content {
+        min-height: 0;
+      }
+
+      .images.image-right {
+        margin-top: 15px;
+      }
+
+      .position {
+        padding: 10px 0;
+        @include font-size(12px);
+        text-transform: uppercase;
+        font-family: $tt_4;
+        color: #b3b0aa;
+      }
+
+      &:before {
+        left: 32px;
+        right: 32px;
+      }
+
+      p {
+        @include font-size(14px);
+      }
+    }
+  }
+
+  .cols {
+
+    padding-bottom: 50px;
+  }
+
+  .col {
+    width: 492px;
+
+    background: #fff;
+    position: relative;
+    .content-item {
+      .images {
+        width: auto;
+      }
+    }
+  }
+
+  .col-a {
+    float: left;
+  }
+
+  .col-b {
+    float: right;
+  }
+}
+
+.page-crashed {
+
+  .logo {
+    height: 180px;
+    min-width: 1122px;
+    @include box-shadow(0 0 20px #000);
+    text-align: center;
+    padding: 52px 0 0;
+    background: #fff image-url("bg/bg-header.jpg") 50% 0 no-repeat;
+    @include background-size(cover);
+  }
+
+  .text {
+    font-size: 30px;
+    padding: 110px 0;
+    text-align: center;
+  }
+}
+
+

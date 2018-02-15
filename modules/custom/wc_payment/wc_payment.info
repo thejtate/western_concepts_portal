@@ -1,0 +1,8 @@
+name = Wc Payment (payjunction.com)
+description = Western concepts payment module
+core = 7.x
+package = Wc
+
+dependencies[] = "ctools"
+dependencies[] = "payjunction_payment"
+dependencies[] = "masked_input"

@@ -1,0 +1,49 @@
+<?php
+/**
+ * @file Implements main module logic
+ */
+
+/**
+ * Implements hook_block_view_system_main_alter().
+ */
+function tabs_to_contextual_block_view_system_main_alter(&$data, $block) {
+  if (user_access('access contextual links')) {
+    $tabs = menu_primary_local_tasks();
+    $data['content']['#contextual_links']['block'] = array(
+      'admin/structure/block/manage',
+      array('system', 'main'),
+    );
+  }
+}
+
+/**
+ * Implements hook_contextual_links_view_alter().
+ */
+function tabs_to_contextual_contextual_links_view_alter(&$element, &$items) {
+  global $theme;
+  if ($theme != variable_get('admin_theme', '')) {
+    if (isset($element['#element']['#block']) && $element['#element']['#block']->delta == "main") {
+      //add contextual links
+      $tabs = menu_primary_local_tasks();
+      if ($tabs) {
+        foreach ($tabs as $tab) {
+          $element['#links'][$tab['#link']['path']] = array(
+            'title' => $tab['#link']['title'],
+            'href' => url($tab['#link']['href'], array('absolute' => TRUE)),
+          );
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function tabs_to_contextual_preprocess_page(&$variables) {
+  global $theme;
+  if ($theme != variable_get('admin_theme', '')) {
+    //hide node tabs
+    $variables['tabs']['#primary'] = array();
+  }
+}

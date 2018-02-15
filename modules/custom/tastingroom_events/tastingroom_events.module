@@ -1,0 +1,439 @@
+<?php
+/**
+ * Implements hook_menu().
+ */
+function tastingroom_events_menu() {
+  $items = array();
+
+  $items['wc_events/add-reservation-data'] = array(
+    'title' => 'Recieve payment info',
+
+    'access arguments' => array('access content'),
+    'page callback' => 'tastingroom_events_add_reservation_data',
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function tastingroom_events_form_alter(&$form, &$form_state, $form_id) {
+    switch($form_id) {
+        case 'event_node_form':
+          if(arg(3) === 'tasting'
+            && empty($form['#node']->nid)
+            && isset($form['field_event_restaurant'][LANGUAGE_NONE])) {
+            //add default checked restaurant on event create with 'tasting' word in url
+            $form['field_event_restaurant'][LANGUAGE_NONE]['#default_value'] = array(RESTAURANT_TASTING_ROOM_NID);
+          }
+        break;
+    }
+}
+
+/**
+ * Receive json encoded event reservation info.
+ */
+function tastingroom_events_add_reservation_data() {
+
+  list($content_type) = explode(';', $_SERVER['CONTENT_TYPE'], 2);
+
+  if (in_array($content_type, array('application/json', 'application/json-rpc', 'application/jsonrequest'))) {
+    // We'll use the inputstream module if it's installed because
+    // otherwise it's only possible to read the input stream once.
+    // And other parts of services or drupal might want to access it.
+    if (module_exists('inputstream')) {
+      $body = file_get_contents('drupal://input');
+    }
+    else {
+      $body = file_get_contents('php://input');
+    }
+
+    $input = drupal_json_decode($body);
+  }
+
+  watchdog('remote', '<pre>' . print_r($input, TRUE) . '</pre>');
+
+
+  $result = drupal_write_record('tasting_shop_reservation', $input);
+
+  if (!$result) {
+    throw new Exception('Invalid data', 500);
+  }
+
+  print 'success';
+  drupal_exit();
+}
+
+/**
+ * Implements hook_views_data().
+ */
+function tastingroom_events_views_data() {
+  $data = array();
+
+  $data['tasting_shop_reservation'] = array(
+    'table' => array(
+      'group' => t('Tastingroom reservation'),
+      'base' => array(
+        'field' => 'id',
+        'title' => t('Tastingroom events reservation'),
+        'help' => t('Tastingroom events reservation'),
+        'weight' => -10,
+      ),
+      'join' => array(
+        'node' => array(
+          'left_field' => 'nid',
+          'field' => 'event_nid',
+        ),
+      ),
+    ),
+  );
+
+  $data['tasting_shop_reservation']['id'] = array(
+    'title' => t('Reservation id'),
+    'help' => t('Id of reservation'),
+    'field' => array(
+      'handler' => 'views_handler_field_numeric',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_numeric',
+    ),
+  );
+
+
+  $data['tasting_shop_reservation']['event_nid'] = array(
+    'title' => t('Event node.'),
+    'help' => t('Event node.'),
+    'relationship' => array(
+      'base' => 'node', // The name of the table to join with.
+      'base field' => 'nid', // The name of the field on the joined table.
+      'handler' => 'views_handler_relationship',
+      'label' => t('Node relationship'),
+      'title' => t('Node relationship'),
+      'help' => t('Event node relationship'),
+    ),
+  );
+
+  $data['tasting_shop_reservation']['event_date'] = array(
+    'title' => t('Party date'),
+    'help' => t('Party date'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['party_name'] = array(
+    'title' => t('Party name'),
+    'help' => t('Party name'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['people_number'] = array(
+    'title' => t('People number'),
+    'help' => t('People number'),
+    'field' => array(
+      'handler' => 'views_handler_field_numeric',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_numeric',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['first_name'] = array(
+    'title' => t('First name'),
+    'help' => t('First name'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['last_name'] = array(
+    'title' => t('Last name'),
+    'help' => t('Last name'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['email'] = array(
+    'title' => t('Email'),
+    'help' => t('Email'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['street_address'] = array(
+    'title' => t('Street address'),
+    'help' => t('Street address'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['street_address_next_line'] = array(
+    'title' => t('Street address next line'),
+    'help' => t('Street address next line'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['city'] = array(
+    'title' => t('City'),
+    'help' => t('City'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['state'] = array(
+    'title' => t('State'),
+    'help' => t('State'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['zip'] = array(
+    'title' => t('Zip'),
+    'help' => t('Zip'),
+    'field' => array(
+      'handler' => 'views_handler_field_numeric',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_numeric',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['receive_emails'] = array(
+    'title' => t('Is receiving email allowed.'),
+    'help' => t('Is receiving email allowed.'),
+    'field' => array(
+      'handler' => 'views_handler_field_boolean',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+      // Note that you can override the field-wide label:
+      'label' => t('My field'),
+      // This setting is used by the boolean filter handler, as possible option.
+      'type' => 'yes-no',
+      // Use boolean_field = 1 instead of boolean_field <> 0 in WHERE statment.
+      'use equal' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_numeric',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['reward_card_member'] = array(
+    'title' => t('Reward card member'),
+    'help' => t('Reward card member'),
+    'field' => array(
+      'handler' => 'views_handler_field_boolean',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+      // Note that you can override the field-wide label:
+      'label' => t('My field'),
+      // This setting is used by the boolean filter handler, as possible option.
+      'type' => 'yes-no',
+      // Use boolean_field = 1 instead of boolean_field <> 0 in WHERE statment.
+      'use equal' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_numeric',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['payment_status'] = array(
+    'title' => t('Payment status'),
+    'help' => t('Payment status'),
+    'field' => array(
+      'handler' => 'views_handler_field_numeric',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_numeric',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['created'] = array(
+    'title' => t('Created date.'),
+    'help' => t('Created date.'),
+    'field' => array(
+      'handler' => 'views_handler_field_date',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort_date',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_date',
+    ),
+  );
+
+  // Example numeric text field.
+  $data['tasting_shop_reservation']['amount'] = array(
+    'title' => t('Payment amount.'),
+    'help' => t('Payment amount.'),
+    'field' => array(
+      'handler' => 'views_handler_field_numeric',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
+
+  $data['tasting_shop_reservation']['reward_card_number'] = array(
+    'title' => t('Reward card number'),
+    'help' => t('Reward card number'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  return $data;
+}

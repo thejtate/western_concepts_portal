@@ -1,0 +1,167 @@
+.outer-slides-about-us {
+  height: 700px;
+  .slides-container {
+    position: relative;
+
+  }
+  .carousel-feature {
+    top: -1000px;
+    left: -1000px;
+    position: absolute;
+  }
+  .slide {
+    padding-top: 112px;
+    padding-bottom: 50px;
+    @include transition(all 600ms);
+    @include scale(0.8);
+    @include opacity(0.6);
+    z-index: 0;
+    cursor: pointer;
+
+    &:hover {
+      @include scale(0.82);
+      &:after {
+        @include scale(0.82);
+      }
+    }
+
+    &.current {
+      @include scale(1);
+      @include opacity(1);
+      z-index: 1;
+      cursor: default;
+
+      .description {
+        opacity: 1;
+        display: block;
+      }
+    }
+
+    .image {
+      background: #fff;
+      @include box-shadow(0px 0px 22px black);
+      width: 744px;
+      padding: 18px;
+      margin: 0 auto;
+      position: relative;
+
+      &:after {
+        width: 100%;
+        height: 5px;
+        background: url("../images/bg/bg_content_bottom.png") 50% 50% repeat-x;
+        @include pseudo-block($left: 0, $bottom: -5px);
+      }
+    }
+
+    .description {
+      opacity: 0;
+      display: none;
+      position: absolute;
+      top: 32px;
+      left: -155px;
+      @include transition(opacity 600ms);
+    }
+
+    .text-year, .text-circle {
+      display: table;
+      position: absolute;
+    }
+
+    .text {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    .block-circle {
+      width: 325px;
+      height: 325px;
+      @include border-radius(50%);
+      background: #000000;
+      @include box-shadow(-3px 3px 41px black);
+    }
+
+    .text-circle {
+      top: 11px;
+      left: 12px;
+      width: 300px;
+      height: 300px;
+      @include border-radius(50%);
+      border: 1px solid #545150;
+      p {
+        font-family: "titilliumtext22llight";
+
+        text-transform: uppercase;
+        color: #999794;
+        margin: 10px 0;
+      }
+      .text {
+        color: #c7993e;
+        @include font-size(30px);
+        font-family: $reverie_italicitalic;
+      }
+    }
+
+    .text-year {
+      @include box-shadow(-3px 3px 41px black);
+      line-height: 2.688em;
+      background: #545150;
+      height: 124px;
+      width: 124px;
+      @include border-radius(50%);
+      z-index: 1;
+      top: -45px;
+      left: 0;
+      @include font-size(48px);
+      font-family: $tt_2;
+    }
+  }
+
+  .slides-pagination {
+    position: absolute;
+    top: 33px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    text-align: center;
+
+    a {
+      display: inline-block;
+      vertical-align: middle;
+      background: #000;
+      height: 29px;
+      width: 29px;
+      margin: 0 22px;
+      @include border-radius(50%);
+      white-space: nowrap;
+      text-indent: -9999px;
+      line-height: 0;
+      @include box-shadow(-3px 4px 9px -4px black);
+      position: relative;
+
+      &:after {
+        width: 60px;
+        border-top: 1px solid #f7f7f7;
+        border-bottom: 1px solid #eaeaea;
+        opacity: 0.1;
+        @include box-shadow(5px 2px 5px 1px black);
+        @include pseudo-block($left: 25px, $top: 14px);
+        z-index: -1;
+        cursor: default;
+      }
+
+      &.current {
+        @include oneline-sprite-box($icons, icon_pager);
+        margin: 0 16px 0 15px;
+
+        &:after {
+          top: 21px;
+        }
+      }
+
+      &:last-child:after {
+        display: none;
+      }
+    }
+  }
+}

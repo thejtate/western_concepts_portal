@@ -1,0 +1,212 @@
+&.page-home {
+
+  .list-sites {
+
+    ul {
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      list-style: none;
+    }
+
+    h3 {
+      margin: 0 auto;
+      @include text-hide;
+    }
+
+    .sites {
+      @include box-shadow(inset 0 4px 16px -4px black);
+      overflow: hidden;
+
+      .box-drop-down {
+        padding-bottom: 10px;
+      }
+
+      figure {
+        @include clear-box;
+      }
+
+      img {
+        float: left;
+        position: relative;
+        z-index: 1;
+        height: 125px;
+        width: 90px;
+      }
+
+      .desc {
+        font-family: $reverie-italicitalic;
+        font-size: 16px;
+        text-shadow: -1px 1px 3px black;
+        margin-bottom: 9px;
+        line-height: 18px;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .link-visit {
+        background: #000;
+        color: #666361;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-family: $tt-6;
+        font-size: 10px;
+        line-height: 24px;
+        letter-spacing: 2px;
+        display: inline-block;
+        height: 24px;
+        padding: 0 64px 0 175px;
+        position: relative;
+        margin-left: -140px;
+
+        &:after {
+          width: 0;
+          height: 0;
+          border-top: 12px solid transparent;
+          border-bottom: 12px solid transparent;
+          @include pseudo-block($right: 0, $top: 0);
+        }
+      }
+    }
+
+    .site-sushi-neko {
+      background: image-url("bg/bg-sushi-neko.jpg");
+
+      .btn-dd {
+        padding: 11px 0 7px;
+      }
+
+      h3 {
+        background: image-url("logos/logo-sushi-neko.png") no-repeat;
+        width: 163px;
+        height: 31px;
+      }
+
+      .desc {
+        color: #c7993e;
+      }
+
+      .link-visit:after {
+        border-right: 9px solid #56320E;
+      }
+    }
+
+    .site-musashis {
+      background: image-url("bg/bg-musashis.jpg");
+
+      .btn-dd {
+        padding: 9px 0 9px;
+      }
+
+      h3 {
+        background: image-url("logos/logo-musashis.png") no-repeat;
+        width: 163px;
+        height: 31px;
+      }
+
+      .desc {
+        color: #d98962;
+      }
+
+      .link-visit:after {
+        border-right: 9px solid #57190C;
+      }
+    }
+
+    .site-will-rogers-theatre {
+      background: image-url("bg/bg-will-rogers-theatre.jpg");
+
+      .btn-dd {
+        padding: 11px 0 9px;
+      }
+
+      h3 {
+        background: image-url("logos/logo-will-rogers-theatre.png") no-repeat;
+        width: 165px;
+        height: 29px;
+      }
+
+      .desc {
+        color: #91b7ba;
+      }
+
+      .link-visit:after {
+        border-right: 9px solid #1A383A;
+      }
+    }
+
+    .site-lobby {
+      background: image-url("bg/bg-lobby.jpg");
+
+      .btn-dd {
+        padding: 6px 0 1px;
+      }
+
+      .box-drop-down {
+        margin-top: 5px;
+      }
+
+      h3 {
+        background: image-url("logos/logo-lobby.png") no-repeat;
+        width: 63px;
+        height: 42px;
+      }
+
+      .desc {
+        color: #9b9e9e;
+      }
+
+      .link-visit:after {
+        border-right: 9px solid #484848;
+      }
+    }
+
+    .site-testing-room {
+      background: image-url("bg/bg-testing-room.jpg");
+
+      .btn-dd {
+        padding: 15px 0 9px;
+      }
+
+      h3 {
+        background: image-url("logos/logo-testing-room.png") no-repeat;
+        width: 163px;
+        height: 25px;
+      }
+
+      .desc {
+        color: #d98962;
+      }
+
+      .link-visit:after {
+        border-right: 9px solid #502610;
+      }
+    }
+
+    .site-coach-house {
+      background: image-url("bg/bg-coach-house.jpg");
+
+      .btn-dd {
+        padding: 19px 0 14px;
+      }
+
+      h3 {
+        background: image-url("logos/logo-coach-house.png") no-repeat;
+        width: 157px;
+        height: 12px;
+      }
+
+      .desc {
+        color: #b86e6f;
+      }
+
+      .link-visit:after {
+        border-right: 9px solid #481621;
+      }
+    }
+  }
+}

@@ -1,0 +1,260 @@
+<?php
+
+/**
+ * @file
+ * Basic cart module file.
+ */
+
+require_once dirname(__FILE__) . '/basic_cart.theme.inc';
+
+/**
+ * Implements hook_permission().
+ */
+function basic_cart_permission() {
+  return array(
+    'administer basic cart' => array(
+      'title' => t('Administer basic cart'),
+      'description' => t('Perform administration tasks for basic cart.'),
+    ),
+    'view basic cart orders' => array(
+      'title' => t('View basic cart orders'),
+      'description' => t('View basic cart orders.'),
+    ),
+    'use basic cart' => array(
+      'title' => t('Use basic cart'),
+      'description' => t('Use basic cart (add to cart, remove from cart, checkout).'),
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_menu().
+ */
+function basic_cart_menu() {
+  $items = array();
+
+  $items['admin/config/basic_cart'] = array(
+    'title' => 'Basic cart',
+    'description' => 'Basic cart content type selection.',
+    'position' => 'left',
+    'weight' => -10,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer basic cart'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+
+  $items['admin/config/basic_cart/settings'] = array(
+    'title' => 'Basic cart',
+    'description' => 'Basic cart content type selection.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('basic_cart_admin_content_type'),
+    'access arguments' => array('administer basic cart'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'basic_cart.admin.inc',
+  );
+  
+  $items['admin/config/basic_cart/settings/settings'] = array(
+    'title' => 'Settings',
+    'description' => 'Basic cart content type selection.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('basic_cart_admin_content_type'),
+    'access arguments' => array('administer basic cart'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'file' => 'basic_cart.admin.inc',
+    'weight' => 5,
+  );
+  
+  $items['admin/config/basic_cart/settings/checkout'] = array(
+    'title' => 'Checkout',
+    'description' => 'Basic cart checkout settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('basic_cart_admin_checkout'),
+    'access arguments' => array('administer basic cart'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'basic_cart.admin.inc',
+    'weight' => 10,
+  );
+
+  $items['cart'] = array(
+    'title' => 'Your shopping cart',
+    'description' => 'The shopping cart page',
+    'page callback' => 'basic_cart_cart',
+    'access arguments' => array('use basic cart'),
+    'type' => MENU_CALLBACK,
+    'file' => 'basic_cart.cart.inc',
+  );
+
+  $items['cart/add'] = array(
+    'title' => 'Add to cart',
+    'description' => 'Add to cart url.',
+    'page callback' => 'basic_cart_add_to_cart',
+    'access arguments' => array('use basic cart'),
+    'type' => MENU_CALLBACK,
+    'file' => 'basic_cart.cart.inc',
+  );
+
+  $items['cart/remove'] = array(
+    'title' => 'Remove from cart',
+    'description' => 'Remove from cart url.',
+    'page callback' => 'basic_cart_remove_from_cart',
+    'access arguments' => array('use basic cart'),
+    'type' => MENU_CALLBACK,
+    'file' => 'basic_cart.cart.inc',
+  );
+
+  $items['checkout'] = array(
+    'title' => 'Checkout',
+    'description' => 'Checkout.',
+    'page callback' => 'basic_cart_checkout',
+    'access arguments' => array('use basic cart'),
+    'type' => MENU_CALLBACK,
+    'file' => 'basic_cart.cart.inc',
+  );
+
+  $items['checkout/thank-you'] = array(
+    'title' => 'Thank you',
+    'description' => 'Checkout thank you page.',
+    'page callback' => 'basic_cart_checkout_thank_you',
+    'access arguments' => array('use basic cart'),
+    'type' => MENU_CALLBACK,
+    'file' => 'basic_cart.cart.inc',
+  );
+  
+  return $items;
+}
+
+
+/**
+ * Implements hook_node_view().
+ */
+function basic_cart_node_view($node, $view_mode, $langcode) {
+  // Check if the current user has access to basic cart.
+  if (user_access('use basic cart')) {
+    // Getting node types.
+    $node_types = variable_get('basic_cart_content_types');
+    if (!is_array($node_types) || empty($node_types)) {
+      return;
+    }
+    // Add to cart button.
+    if (!empty($node_types[$node->type]) &&  in_array($node->type, $node_types)) {
+      // Price field.
+      $price = field_get_items('node', $node, 'price');
+      $price = check_plain($price[0]['value']);
+      // Price format.
+      $price = basic_cart_price_format($price);
+      $node->content['price'] = array(
+        '#markup' => theme('basic_cart_price', array(
+          'price' => $price, 
+        )),
+        '#weight' => 30,
+      );
+      $node->content['basic_cart_add_to_cart'] = array(
+        '#markup' => theme('basic_cart_add_to_cart', array('nid' => $node->nid)),
+        '#weight' => 50,
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function basic_cart_theme() {
+  return array(
+    'basic_cart_cart_total_price' => array(
+      'variables' => array('price' => NULL),
+    ),
+    'basic_cart_price' => array(
+      'function' => 'basic_cart_price',
+      'variables' => array('price' => NULL),
+    ),
+    'basic_cart_add_to_cart' => array(
+      'function' => 'basic_cart_add_to_cart_button',
+      'variables' => array('nid' => NULL),
+    ),
+    'basic_cart_cart_flat' => array(
+      'template' => 'basic_cart_cart_flat',
+      'variables' => array('cart' => NULL, 'price' => NULL, 'vat' => NULL),
+    ),
+    'basic_cart_cart_render_block' => array(
+      'template' => 'basic_cart_cart_render_block',
+      'variables' => array('cart' => NULL, 'price' => NULL, 'vat' => NULL),
+    ),
+    'basic_cart_render_cart_element' => array(
+      'render element' => 'form',
+    ),
+  );
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function basic_cart_block_info() {
+  $blocks['shopping_cart'] = array(
+    'info' => t('Shopping cart'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function basic_cart_block_view($delta = '') {
+  // Check if the current user has access.
+  switch ($delta) {
+    case 'shopping_cart':
+      if (user_access('use basic cart')) {
+        // Price format.
+        module_load_include('inc', 'basic_cart', 'basic_cart.cart');
+        $price = basic_cart_get_total_price();
+        $total = basic_cart_price_format($price->total);
+        $options = array(
+          'cart' => basic_cart_get_cart(),
+          'price' => $total,
+        );
+        // Checking the VAT.
+        $vat_is_enabled = (int) variable_get('basic_cart_vat_state');
+        if (!empty ($vat_is_enabled) && $vat_is_enabled) {
+          $options['vat'] = basic_cart_price_format($price->vat);
+        }
+        
+        $block['subject'] = t('Your cart');
+        $block['content'] = theme('basic_cart_cart_render_block', $options);
+        return $block;
+      }
+      break;
+  }
+}
+
+/**
+ * Helper function. Returns true if given node (node object or string node type) is a product.
+ */
+function basic_cart_is_product($node) {
+  $type = is_object($node) ? $node->type : $node;
+  // Getting node types.
+  $node_types = basic_cart_product_types();
+  if (empty($node_types) || !is_array($node_types)) {
+    return FALSE;
+  }
+  return in_array($type, $node_types);
+}
+
+/**
+ * Helper function. Returns an array of basic_cart product (content) types.
+ */ 
+function basic_cart_product_types(){
+  return variable_get('basic_cart_content_types', array());
+}
+
+/**
+ * Implementation hook_views_api()
+ */
+function basic_cart_views_api() {
+  return array(
+    'api' => '2.0',
+    'path' => drupal_get_path('module', 'basic_cart') . '/views',
+  );
+}

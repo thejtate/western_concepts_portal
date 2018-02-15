@@ -1,0 +1,45 @@
+.header {
+  padding-top: 20px;
+  background: image-url("bg/bg-header.jpg") no-repeat;
+  background-size: cover;
+  text-align: center;
+  position: relative;
+}
+
+.header-inner {
+  padding-top: 48px;
+
+  .logo {
+    margin-bottom: 7px;
+    
+    h1 {
+      @include hide-text;
+      height: 0;
+      margin: 0;
+    }
+  }
+
+  .card {
+    margin-bottom: 6px;
+
+    img, figcaption {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    figcaption {
+      font-family: $reverie-regular;
+    }
+
+    a {
+      color: #434343;
+      font-size: 12px;
+      text-decoration: none;
+
+      span {
+        font-size: 17px;
+        display: block;
+      }
+    }
+  }
+}

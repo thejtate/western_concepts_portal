@@ -1,0 +1,194 @@
+<?php
+/**
+ * @file Module install functionality
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function tastingroom_events_schema() {
+  $schema = array();
+
+  $schema['tasting_shop_reservation'] = array(
+    'description' => 'Tasting room reservations',
+
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'size' => 'normal',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique Tasting_shop  reservation ID.',
+      ),
+      'event_nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The related event.nid.',
+      ),
+      'event_date' => array(
+        'type' => 'varchar',
+        'size' => 'normal',
+        'length' => 100,
+        'default' => '',
+        'description' => 'Party date in Y-m-d format',
+      ),
+      'party_name' => array(
+        'type' => 'varchar',
+        'size' => 'normal',
+        'length' => 255,
+        'default' => '',
+        'description' => 'Party name',
+      ),
+      'people_number' => array(
+        'type' => 'int',
+        'size' => 'normal',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Number of people',
+      ),
+      'first_name' => array(
+        'type' => 'varchar',
+        'size' => 'normal',
+        'length' => 255,
+        'default' => '',
+        'description' => 'First name',
+      ),
+      'last_name' => array(
+        'type' => 'varchar',
+        'size' => 'normal',
+        'length' => 255,
+        'default' => '',
+        'description' => 'Last name',
+      ),
+      'email' => array(
+        'type' => 'varchar',
+        'size' => 'normal',
+        'length' => 255,
+        'default' => '',
+        'description' => 'Email',
+      ),
+      'street_address' => array(
+        'type' => 'varchar',
+        'size' => 'normal',
+        'length' => 255,
+        'default' => '',
+        'description' => 'Street address',
+      ),
+      'street_address_next_line' => array(
+        'type' => 'varchar',
+        'size' => 'normal',
+        'length' => 255,
+        'default' => '',
+        'description' => 'Address next line',
+      ),
+      'city' => array(
+        'type' => 'varchar',
+        'size' => 'normal',
+        'length' => 255,
+        'default' => '',
+        'description' => 'City',
+      ),
+      'state' => array(
+        'type' => 'varchar',
+        'size' => 'normal',
+        'length' => 20,
+        'default' => '',
+        'description' => 'State',
+      ),
+      'zip' => array(
+        'type' => 'int',
+        'size' => 'normal',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => 0,
+        'description' => 'Zip',
+      ),
+      'phone' => array(
+        'type' => 'varchar',
+        'size' => 'normal',
+        'length' => 255,
+        'default' => '',
+        'description' => 'Phone number',
+      ),
+      'receive_emails' => array(
+        'type' => 'blob',
+        'size' => 'normal',
+        'serialize' => FALSE,
+        'description' => 'Is receiving emails allowed',
+      ),
+      'reward_card_member' => array(
+        'type' => 'blob',
+        'size' => 'normal',
+        'serialize' => FALSE,
+        'description' => 'Is reward card memeber',
+      ),
+      'reward_card_number' => array(
+        'type' => 'varchar',
+        'size' => 'normal',
+        'length' => 255,
+        'default' => '',
+        'description' => 'Reward card number',
+      ),
+      'payment_status' => array(
+        'type' => 'int',
+        'size' => 'normal',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Payment status',
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp when the reservation was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'amount' => array(
+        'type' => 'float',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Total payment amount.',
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Update table
+ */
+function tastingroom_events_update_7000() {
+  $created = array(
+    'description' => 'The Unix timestamp when the reservation was created.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+  );
+  db_add_field('tasting_shop_reservation', 'created', $created);
+  $amount = array(
+    'type' => 'float',
+    'not null' => TRUE,
+    'default' => 0,
+    'description' => 'Total payment amount.',
+  );
+  db_add_field('tasting_shop_reservation', 'amount', $amount);
+}
+
+
+/**
+ * Add reaward card number
+ */
+function tastingroom_events_update_7001() {
+  $reward_card_number = array(
+    'type' => 'varchar',
+    'size' => 'normal',
+    'length' => 255,
+    'default' => '',
+    'description' => 'Reward card number',
+  );
+  db_add_field('tasting_shop_reservation', 'reward_card_number', $reward_card_number);
+}

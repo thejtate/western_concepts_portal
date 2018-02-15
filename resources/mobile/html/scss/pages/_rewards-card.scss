@@ -1,0 +1,60 @@
+&.page-rewards-card-members {
+  background: image-url('bg/bg-rewards-card.jpg');
+
+  p {
+    font-size: 12px;
+  }
+
+  .btn-member-wrapper {
+    background: #2e2d2d;
+    margin: 0 -27px;
+    position: relative;
+    padding: 10px 105px 10px 27px;
+
+    .title-btn {
+      display: block;
+      text-transform: uppercase;
+      font-size: 10px;
+      color: #c2c2c2;
+    }
+
+    a {
+      color: #c7993e;
+      font-size: 15px;
+      text-decoration: none;
+      font-family: $reverie-italicitalic;
+      position: relative;
+      padding-right: 18px;
+      letter-spacing: -1px;
+
+      &:after {
+        @include pseudo-block($right: 0, $bottom: 2px);
+        @include oneline-sprite-box($icons, icon-arrow);
+      }
+    }
+
+    .image-card {
+      position: absolute;
+      right: 0;
+      top: -11px;
+    }
+
+    img {
+      width: 102px;
+    }
+  }
+
+  .text-description {
+    color: #a6a5a1;
+    font-size: 10px;
+
+    p {
+      font-size: 10px;
+    }
+  }
+
+  .btn-wrapp {
+    margin-top: 25px;
+    text-align: center;
+  }
+}

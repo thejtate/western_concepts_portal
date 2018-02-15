@@ -1,0 +1,153 @@
+.content-item {
+  background: #fff;
+  position: relative;
+  padding: 15px;
+  margin-bottom: 20px;
+  @include box-shadow(0 3px 3px 1px black);
+
+  &.style-black {
+    background: #ebeadf;
+
+    &:after {
+      height: 4px;
+      background: image-url('bg/bg-content-bottom-a.png');
+    }
+  }
+
+  &:before {
+    background: image-url('bg/bg-content-top.png');
+    height: 15px;
+    @include pseudo-block($left: 15px, $right: 15px, $top: 0);
+  }
+
+  &:after {
+    background: image-url('bg/bg-content-bottom.png');
+    height: 3px;
+    @include pseudo-block($left: 0, $right: 0, $top: 100%);
+  }
+
+  h2 {
+    color: #d5a252;
+    font-family: $reverie-italicitalic;
+    margin: 20px 0 5px;
+    font-size: 16px;
+    font-weight: normal;
+  }
+
+  h5 {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 12px 0;
+  }
+
+  ul {
+    margin: 0 0 0 18px;
+    padding: 0;
+
+    li {
+      color: #d5a252;
+      margin-bottom: 5px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    p {
+      color: #595957;
+      margin: 0;
+    }
+  }
+}
+
+.content-title, .title-content {
+  margin-bottom: 26px;
+}
+
+h1 {
+  font-weight: normal;
+  font-size: 25px;
+  font-family: $copse-regular;
+  color: #1e1e1e;
+  margin: 10px 0 5px;
+  border-bottom: 1px solid #e0ded7;
+  padding-bottom: 3px;
+}
+
+p {
+  font-size: 10px;
+  line-height: 18px;
+  font-family: $bitter-regular;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.btn-submit, .btn-next, .btn-previous {
+  border: 1px solid #c7993e;
+  padding: 1px;
+  display: inline-block;
+
+  input, a {
+    height: 22px;
+    padding: 0 14px;
+    background: #c7993e;
+    border: none;
+    outline: none;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-family: $tt-6;
+    letter-spacing: 1px;
+    display: block;
+    text-decoration: none;
+    line-height: 22px;
+  }
+}
+
+.btn-next, .btn-previous {
+
+  a {
+    position: relative;
+
+    &:after {
+      @include pseudo-block($right: 12px, $top: 50%);
+      transform: translate(0, -50%);
+      -webkit-transform: translate(0, -50%);
+      margin-top: 1px;
+    }
+  }
+}
+
+.btn-next {
+
+
+  a {
+    padding-right: 20px;
+
+    &:after {
+      @include oneline-sprite-box($icons, icon-arrow-next);
+    }
+  }
+}
+
+.btn-previous {
+
+  a {
+    background: #e0ddca;
+    color: #a09f9a;
+    padding-left: 20px;
+
+    &:after {
+      left: 12px;
+      right: auto;
+      @include oneline-sprite-box($icons, icon-arrow-previous);
+    }
+  }
+}

@@ -1,0 +1,25 @@
+&.page-about-us-mobile {
+  background: image-url('bg/bg-page.jpg');
+
+  .position {
+    font-family: $tt-6;
+    font-size: 8px;
+    text-transform: uppercase;
+    color: #b3b0aa;
+    letter-spacing: 1px;
+  }
+
+  .img {
+    float: right;
+    margin-left: 15px;
+
+    img {
+      width: 138px;
+    }
+  }
+
+  p {
+    margin: 0 0 12px;
+    color: #595957;
+  }
+}

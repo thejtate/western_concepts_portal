@@ -1,0 +1,121 @@
+select {
+  -webkit-appearance: menulist-button;
+}
+
+.combo-wrapper {
+  //border: 1px solid #cccccc;
+  color: #fff;
+  font-family: $tt_4;
+  text-transform: uppercase;
+  //font-size: 12px;
+  line-height: 22px;
+  cursor: pointer;
+  height: 30px !important;
+  display: block;
+  zoom: 1;
+  background: #b3b0aa;
+  vertical-align: top;
+}
+.combo-wrapper-hover {
+  border-color: #4444aa;
+}
+.combo-wrapper-active {
+  border-color: #a0a0a0;
+}
+.combo-disabled {
+  background: #eeeeee;
+}
+.combo-selected {
+  padding: 0 0 0 8px;
+  @include box-sizing(border-box);
+  width: auto;
+  margin-right: -1px;
+  float: left;
+  line-height: 30px;
+  @include font-size(12px);
+}
+.combo-button {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 22px;
+  color: #cccccc;
+  float: right;
+  position: relative;
+  text-indent: -9999px;
+  display: block;
+  border-left: 1px solid #ebeadf;
+  &:after {
+    @include pseudo-block($top: 50%, $right: 9px);
+    @include oneline-sprite-box($icons, icon_select_arrow);
+    margin-top: -6px;
+  }
+}
+.combo-list {
+  list-style: none;
+  background: #595957;
+  @include box-shadow();
+  padding: 0;
+  margin: 1px 0 0;
+  color: #b3b0aa;
+  font-family: $tt_2;
+  @include font-size(12px);
+  text-transform: uppercase;
+  //border: 1px solid #efefef;
+  z-index: 9999;
+
+  li {
+    padding: 8px;
+    margin: 0;
+    cursor: pointer;
+  }
+  .combo-group-label {
+    font-style: italic;
+    font-weight: bold;
+    cursor: default;
+  }
+  .combo-group {
+    padding: 0;
+    margin: 0;
+
+    li {
+      width: auto;
+      float: none;
+      padding-left: 20px;
+    }
+    ul {
+
+    }
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    clear: both;
+    overflow: hidden;
+    font-size: 10px;
+  }
+}
+.combo-multiple {
+  margin: 0;
+  zoom: 1;
+  clear: both;
+  overflow: hidden;
+  //border: 1px solid green;
+
+  li {
+    float: left;
+    width: 100%;
+  }
+}
+.combo-item-hover {
+  background: #40403e;
+}
+.combo-item-active {
+  background: #40403e;
+ //color: #ffffff;
+}
+.combo-list-long {}
+
+.combo-focus {
+  border-color:yellow;
+}

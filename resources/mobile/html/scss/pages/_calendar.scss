@@ -1,0 +1,205 @@
+&.page-calendar-mobile {
+
+  .calendar-wrapper {
+
+    .event-desc {
+      display: table;
+      width: 100%;
+    }
+
+    .date, .text-event, .time-event {
+      display: table-cell;
+    }
+
+    .text-event, .time-event {
+      vertical-align: middle;
+    }
+
+    .date-nav-wrapper {
+      margin: 0;
+    }
+
+    .wrapper-event {
+      @include background-image(linear-gradient(top, #fff 0%, #e2e2e2 100%));
+      color: #444444;
+      table-layout: fixed;
+    }
+
+    .date-nav {
+      position: relative;
+      height: auto;
+      margin: 0;
+      min-height: auto;
+      padding: 0;
+    }
+
+    .calendar-header {
+      background: #393939;
+      text-align: center;
+    }
+
+    .calendar-content {
+
+      ul {
+        margin: 0;
+        padding: 0;
+      }
+
+      li {
+        list-style: none;
+        margin: 0;
+      }
+    }
+
+    .time-event {
+      width: 20%;
+
+      span {
+        position: relative;
+      }
+    }
+
+    .wrapper-drop-down {
+
+      .time-event span:after {
+        @include pseudo-block($left: 50%, $bottom: -15px);
+        @include oneline-sprite-box($icons, icon-arrow-a);
+        margin-left: -7px;
+      }
+
+      &.collapsed .time-event span:after {
+        background: image-url("icons/icon-arrow-a-active.png");
+      }
+    }
+
+    .box-drop-down {
+      padding: 25px 15px;
+      color: #fff;
+      @include background-image(linear-gradient(top, #303030 0%, #5A5A5A 100%));
+      position: relative;
+
+      &:before {
+        width: 0;
+        height: 0;
+        @include pseudo-block($left: 50%, $top: 0);
+        border-right: 10px solid transparent;
+        border-left: 10px solid transparent;
+        border-top: 10px solid #F1F1F1;
+      }
+    }
+
+    h3, h5, p {
+      margin: 0;
+    }
+
+    h3 {
+      color: #fff;
+      font-family: $reverie-regular;
+      font-size: 17px;
+      font-weight: normal;
+      padding: 10px 0;
+      line-height: 21px;
+    }
+
+    h5 {
+      font-size: 14px;
+    }
+
+    .pager {
+      padding: 0;
+      margin: 0;
+
+      li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 50%;
+        margin-top: -6px;
+      }
+
+      .date-prev, .date-next {
+
+        a {
+          padding: 14px;
+          display: block;
+          margin: -7px 0 0;
+          @include text-hide;
+
+          &:before {
+            @include pseudo-block($top: 0);
+            width: 0;
+            height: 0;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+          }
+        }
+      }
+
+      .date-prev {
+        left: 45px;
+
+        a {
+          margin-left: -10px;
+
+          &:before {
+            left: 0;
+            border-right: 6px solid #c7993e;
+          }
+        }
+      }
+
+      .date-next {
+        right: 45px;
+
+        a {
+          margin-right: -10px;
+
+          &:before {
+            right: 0;
+            border-left: 6px solid #c7993e;
+          }
+        }
+      }
+    }
+
+    .date {
+      width: 20%;
+      font-size: 16px;
+      font-family: $tt-3;
+      position: relative;
+      text-align: center;
+      vertical-align: top;
+      border-right: 1px solid #cacaca;
+
+      .date-hd {
+        background: #c7993e;
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-family: $tt-3;
+        line-height: 22px;
+      }
+
+      .date-bd {
+        text-align: center;
+        font-size: 40px;
+        font-family: $tt-6;
+      }
+    }
+
+    .text-event {
+      width: 60%;
+      padding: 12px;
+    }
+
+    .text {
+      font-size: 10px;
+      font-family: $tt-3;
+
+      p {
+        font-family: $tt-3;
+      }
+    }
+  }
+}

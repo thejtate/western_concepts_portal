@@ -1,0 +1,106 @@
+&.page-careers-mobile {
+  background: image-url('bg/bg-musashis.jpg');
+
+  .content-item {
+    background: #fffef7;
+  }
+
+  .content-title {
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    font-size: 23px;
+  }
+
+  .tabs-nav {
+    text-align: center;
+    margin-bottom: 22px;
+
+    ul {
+      margin: 0;
+      padding: 0;
+    }
+
+    li {
+      list-style: none;
+      padding: 0;
+      margin: 0 3px;
+      width: 17px;
+      height: 17px;
+      display: inline-block;
+      text-align: center;
+      border-radius: 50%;
+      line-height: 17px;
+      background: #e6e4e2;
+      font-family: $tt_2;
+      font-size: 12px;
+
+      &.active {
+
+        background: #000000;
+      }
+
+      a {
+        color: #b3b0aa;
+        text-decoration: none;
+      }
+    }
+  }
+
+  .tabs-content {
+
+    .item {
+
+      &:not(.active) {
+        position: absolute !important;
+        z-index: -1;
+        visibility: hidden;
+        opacity: 0;
+      }
+
+      &.active {
+        display: block;
+        position: relative;
+      }
+    }
+
+  }
+
+  .btn-wrap {
+    text-align: center;
+    margin-top: 26px;
+  }
+
+  .btn-wrap-previous {
+    text-align: center;
+    margin: 17px 0 10px;
+  }
+
+  .btn-gift {
+    margin-top: 26px;
+    text-align: center;
+
+    .btn-title {
+      font-size: 9px;
+      color: #b3b0aa;
+      text-transform: uppercase;
+      font-family: $tt-4;
+      letter-spacing: 1px;
+    }
+
+    a {
+      color: #d5a252;
+      font-family: $reverie-italicitalic;
+      text-decoration: none;
+      font-size: 15px;
+      padding-right: 15px;
+      position: relative;
+
+      &:after {
+        @include oneline-sprite-box($icons, icon-arrow);
+        @include pseudo-block($right: 0, $bottom: 1px);
+      }
+    }
+  }
+}

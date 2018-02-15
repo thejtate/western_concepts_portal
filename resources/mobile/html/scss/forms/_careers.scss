@@ -1,0 +1,436 @@
+.form.form-careers {
+
+  .webform-component--authorization {
+    p {
+      margin: 0 0 28px;
+    }
+  }
+
+  .form-field-text, .form-type-text {
+    margin-bottom: 11px;
+  }
+
+  .fieldset-description {
+    font-family: $reverie-italicitalic;
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  .webform-component--authorization {
+
+    .fieldset-description {
+      text-align: left;
+    }
+  }
+
+  .form-fieldset, .webform-component {
+    border: none;
+    padding: 0;
+    margin: 0 0 11px;
+  }
+
+  .webform-component-radios, .webform-component-select,
+  .webform-component-checkboxes,
+  .form-fieldset > .webform-component-textfield {
+
+    & > label {
+      font-family: $reverie-italicitalic;
+      font-size: 12px;
+      margin-bottom: 10px;
+      text-align: center;
+      text-transform: none;
+      letter-spacing: normal;
+      color: #000;
+      font-weight: normal;
+    }
+
+
+  }
+
+  .form-fieldset.rtleft .webform-component-textfield {
+
+    & > label {
+      text-align: left;
+    }
+  }
+
+//  .webform-component-radios, .webform-component-checkboxes {
+//    margin-bottom: 20px;
+//  }
+
+  .webform-component-list-fieldset,
+  fieldset[class*="webform-component--employment-history--employment-history-"],
+  fieldset[class*="webform-component--references--references-"] {
+    padding-left: 30px;
+    position: relative;
+
+    & > legend {
+      margin: 0;
+
+      .fieldset-legend {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 17px;
+        height: 17px;
+        display: block;
+        text-align: center;
+        border-radius: 50%;
+        line-height: 17px;
+        color: #fff;
+        background: #d5a252;
+        font-family: $tt_2;
+        font-size: 12px;
+      }
+    }
+  }
+
+  fieldset[class*="webform-component--references--references-"] {
+
+    label.element-invisible {
+      height: auto;
+      position: static !important;
+    }
+  }
+
+//  .form-item {
+//    margin: 0;
+//    padding: 0;
+//  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    z-index: -1;
+
+    &.error + label {
+      color: red;
+    }
+
+    &:checked {
+
+      & + label:after {
+        border-color: #d0a54e;
+      }
+    }
+
+    &.error:checked {
+
+      & + label:after {
+        border-color: red;
+      }
+    }
+
+    & + label {
+      cursor: pointer;
+      position: relative;
+      line-height: 1.2;
+      display: inline-block;
+      font-family: $tt-6;
+      color: #b3b0aa;
+      padding: 5px 0 3px 20px;
+      font-size: 11px;
+      margin: 0;
+
+      &:before, &:after {
+        @include pseudo-block($left: 0, $top: 50%);
+        transform: translate(0, -50%);
+        -webkit-transform: translate(0, -50%);
+        border-radius: 50%;
+      }
+
+      &:before {
+        background: #fff;
+        width: 14px;
+        height: 14px;
+        border: 1px solid #e1ded7;
+      }
+
+      &:after {
+        left: 3px;
+        border: 5px solid #f2f1e6;
+      }
+    }
+  }
+
+  .form-radios, .form-checkboxes {
+    margin: 0 -10px;
+    @include clearfix();
+    text-align: center;
+
+    .form-type-radio, .form-type-checkbox {
+      float: none;
+      display: inline-block;
+      margin: 0 10px 10px;
+    }
+  }
+
+
+  .webform-component--choose-a-restaurant--choose-a-restaurant-radios {
+
+    .form-radios {
+     text-align: left;
+     margin: 0 -2px;
+
+      .form-type-radio {
+        margin: 0 2px 10px;
+        min-width: 97px;
+      }
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+
+      & + label {
+        color: #595957;
+      }
+    }
+  }
+
+  .form-text, .form-textarea  {
+    background: #f2f1e6;
+    height: 22px;
+    appearance: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .form-textarea {
+    height: 45px;
+    resize: none;
+  }
+
+  .width-form-40, .width-form-30, .width-form-50,
+  .width-form-70, .width-form-80, .width-form-100, .width-form-180 {
+    margin-right: 20px;
+  }
+
+  .width-form-40, .width-form-30, .width-form-50, .width-form-70, .width-form-100,
+  .width-form-80, .width-form-180 {
+    float: left;
+  }
+
+  @for $i from 1 through 93 {
+    .width-form-#{$i}-percentages {
+      width: 0% + $i;
+      float: left;
+      margin-right: 7%;
+    }
+  }
+
+  .width-form-30 {
+    width: 30px;
+  }
+
+  .width-form-40 {
+    width: 40px;
+  }
+
+  .width-form-50 {
+    width: 50px;
+  }
+
+  .width-form-70 {
+    width: 70px;
+  }
+
+  .width-form-90 {
+    width: 90px;
+  }
+
+  .width-form-100 {
+    width: 100px;
+  }
+
+  .width-form-180 {
+    width: 180px;
+  }
+
+  .width-fieldset-136 {
+    width: 136px;
+    margin: 0 auto 20px;
+  }
+
+  .width-fieldset-90 {
+    width: 90px;
+    margin: 0 auto 20px;
+  }
+
+  .width-fieldset-110 {
+    width: 110px;
+    margin: 0 auto 20px;
+  }
+
+  .width-fieldset-180 {
+    width: 180px;
+    margin: 0 auto 20px;
+  }
+
+  .last {
+    margin-right: 0;
+  }
+
+  .no-vertical-margin {
+    margin-bottom: 0;
+  }
+
+  .clear-left {
+    clear: left;
+  }
+
+  .rtcenter {
+    text-align: center;
+  }
+
+  .rtcenter {
+    text-align: center;
+  }
+
+  .rtblockcenter {
+    margin: 0 auto;
+    float: none;
+  }
+
+  .field-ssn {
+    margin-right: 0;
+
+    label {
+      white-space: nowrap;
+    }
+  }
+
+  .field-date {
+    margin-right: 6px;
+  }
+
+  .field-ssn-line {
+    position: relative;
+    margin-left: 14px;
+    margin-right: 0;
+
+    .form-item {
+      margin-top: 18px;
+    }
+
+    &:after {
+      @include pseudo-block($right: 100%, $top: 50%);
+      transform: translate(0, -50%);
+      -webkit-transform: translate(0, -50%);
+      border-top: 1px solid #bcb9b2;
+      width: 7px;
+      margin: 8px 4px 0 0;
+    }
+  }
+
+  .legend-title {
+    position: relative;
+    border-top: 1px solid #CCC9C2;
+    display: block;
+    margin: 0 0 19px 0;
+  }
+
+  .number-step {
+    position: absolute;
+    display: block;
+    width: 17px;
+    height: 17px;
+    text-align: center;
+    border-radius: 50%;
+    line-height: 17px;
+    background: #000000;
+    font-family: $tt_2;
+    color: #b3b0aa;
+    font-size: 12px;
+    top: 6px;
+    left: 0;
+  }
+
+  .legend-span {
+    display: block;
+    color: #d5a252;
+    font-size: 16px;
+    font-family: $reverie_italicitalic;
+    padding: 17px 0 0 37px;
+    position: relative;
+
+    &:before {
+      @include pseudo-block($top: 0, $left: 23px);
+      @include oneline-sprite-box($icons, line_botton_title-a);
+    }
+  }
+
+  .captcha {
+    text-align: center;
+    margin: 20px 0 30px;
+  }
+
+  input[type="text"].error {
+    border: 1px solid #ff0000;
+  }
+
+  .webform-component-fieldset.webform-component--availability {
+    margin: 0 0 15px;
+
+    legend {
+      text-align: center;
+      width: 100%;
+    }
+
+    .fieldset-legend {
+      position: relative;
+      width: 100%;
+      border-radius: 0;
+      height: auto;
+      padding: 3px 0;
+      text-transform: uppercase;
+      line-height: normal;
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 7px;
+
+      display: inline-block;
+      background: #d5a252;
+      text-align: center;
+      color: #fff;
+      font-family: $tt-2;
+    }
+
+    .fieldset-wrapper {
+      @include clearfix();
+
+      label {
+        display: inline-block;
+      }
+
+      & > .form-item {
+        width: 44%;
+        float: left;
+        margin: 0 3% 10px;
+      }
+    }
+  }
+
+}
+
+
+.page-careers .combo-list li {
+
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+

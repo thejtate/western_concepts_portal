@@ -1,0 +1,227 @@
+<?php
+
+/**
+ * @file
+ * Install file for the wc_payment module.
+ */
+
+
+/**
+ * Implements hook_schema().
+ */
+function wc_payment_schema() {
+  $schema['wc_payment_results'] = array(
+    'description' => 'Payments results',
+    'fields' => array(
+      'pid' => array(
+        'description' => 'The primary identifier for a paiment.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'tid' => array(
+        'description' => 'The transaction ID.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'transaction_date' => array(
+        'description' => 'The transaction date.',
+        'mysql_type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'response_code' => array(
+        'description' => 'The transaction response code.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'response_notes' => array(
+        'description' => 'The transaction response notes.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'amount' => array(
+        'description' => 'The transaction response notes.',
+        'type' => 'float',
+        'not null' => TRUE,
+      ),
+      'first_name' => array(
+        'description' => 'The buyer\'s first name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'last_name' => array(
+        'description' => 'The buyer\'s last name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'email' => array(
+        'description' => 'The buyer\'s email.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'phone' => array(
+        'description' => 'The buyer\'s phone.',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+      ),
+      'company' => array(
+        'description' => 'The buyer\'s company.',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+      ),
+      'address' => array(
+        'description' => 'The buyer\'s address.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'city' => array(
+        'description' => 'The buyer\'s city.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'zip' => array(
+        'description' => 'The buyer\'s zip.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'state' => array(
+        'description' => 'The buyer\'s state.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'shipping_first_name' => array(
+        'description' => 'The buyer\'s shipping first name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'shipping_last_name' => array(
+        'description' => 'The buyer\'s shipping last name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'shipping_company' => array(
+        'description' => 'The buyer\'s shipping company.',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+      ),
+      'shipping_address' => array(
+        'description' => 'The buyer\'s shipping address.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'shipping_city' => array(
+        'description' => 'The buyer\'s shipping city.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'shipping_zip' => array(
+        'description' => 'The buyer\'s shipping zip.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'shipping_state' => array(
+        'description' => 'The buyer\'s shipping state.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'description' => array(
+        'description' => 'The transaction description.',
+        'type' => 'text',
+      ),
+      'log' => array(
+        'description' => 'The transaction log.',
+        'type' => 'text',
+      ),
+      'site' => array(
+        'description' => 'Site.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'portal',
+      ),
+      'order_data' => array(
+        'description' => 'Order data.',
+        'type' => 'text',
+        'not null' => TRUE,
+        'serialize' => TRUE,
+        'serialized default' => 'a:0:{}',
+      ),
+      'order_status' => array(
+        'description' => 'Order status.',
+        'type' => 'varchar',
+        'length' => 20,
+        'not null' => TRUE,
+        'default' => ORDER_STATUS_FAILED,
+      ),
+    ),
+    'primary key' => array('pid'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Add birthday field to {wc_payment_results} table.
+ */
+function wc_payment_update_7100() {
+  $spec = array(
+    'type' => 'varchar',
+    'description' => "Birthday",
+    'length' => 255,
+    'not null' => FALSE,
+    'default' => '',
+  );
+  db_add_field('wc_payment_results', 'birthday', $spec);
+}
+
+/**
+ * Add error field to {wc_payment_results} table.
+ */
+function wc_payment_update_7101() {
+  $spec = array(
+    'type' => 'text',
+    'size' => 'normal',
+    'serialize' => FALSE,
+    'description' => 'Error message',
+  );
+
+  db_add_field('wc_payment_results', 'error', $spec);
+}
+

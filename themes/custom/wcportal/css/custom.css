@@ -1,0 +1,295 @@
+.easy-blog-archive a.link-dropdown.active {
+    color: #000000;
+}
+
+.messages p {
+    margin: 0px;
+}
+
+.form-site-custom .hide-title .form-item label {
+    display: none;
+}
+
+.btn-remove .remove {
+    text-transform: uppercase;
+}
+
+.table-product .table .text-product.checkout-page-cart {
+    width: 180px;
+}
+
+/* Progressive dinner */
+.container-inline-date .date-padding {
+    padding: 0;
+}
+
+/* Rewards Card Members */
+.page-rewards-card-members #block-wcportal-custom-wcportal-custom-rcm .messages.error {
+    font-size: 14px;
+}
+
+/* Calendar */
+.view .date-nav-wrapper .date-prev {
+    right: inherit;
+    background: none;
+    border-radius: inherit;
+    font-size: 0.8125em;
+}
+
+.view .date-nav-wrapper .date-next {
+    right: inherit;
+    background: none;
+    border-radius: inherit;
+    font-size: 0.8125em;
+}
+
+.page-calendar .fancybox-skin {
+    border: none;
+    background: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+/* user */
+.page-user .tabs {
+    display: none;
+}
+
+div.captcha {
+    margin-bottom: 70px;
+}
+
+/* gift type */
+.gift-type-select-wrapper {
+    clear: both;
+}
+
+.sidebar-item .form-site-custom .width-form-298.birthday-date-select .form-select {
+    width: 100px;
+}
+
+.sidebar-item .form-site-custom .width-form-298.birthday-date-select .form-type-select{
+    float: left;
+    width: auto;
+}
+
+.sidebar-item .form-site-custom .width-form-298.birthday-date-select .form-item-personal-information-birthday-year{
+    margin-left: 8px;
+}
+
+.sidebar-item .form-site-custom .width-form-298.birthday-date-select label{
+    color: #595957;
+    font-family: 'bitterregular';
+    float: left;
+}
+
+
+#edit-personal-information-birthday{
+    float: right;
+}
+a.construciton-link {
+    position: absolute;
+    top: 65px;
+    right: 30px;
+}
+body.admin-menu a.construciton-link {
+    top: 85px;
+}
+
+.popup_calendar .btn-reserv-wrapper{
+
+}
+
+.popup_calendar a.btn-reservation {
+    font-family: "titilliumtext22l_ltmedium";
+    text-decoration: none;
+    display: inline-block;
+    color: #999794;
+    text-transform: uppercase;
+    font-size: 1em;
+    background: #1e1e1e;
+    padding: 8px 20px;
+    line-height: 1;
+}
+
+.popup_calendar .private-event-wrapper{
+    text-align: center;
+    font-family: "titilliumtext22lxbold";
+    text-transform: uppercase;
+    font-size: 1.3em;
+    margin-top: 5px;
+}
+
+/* Shop */
+.page-shop .images .discount p {
+    font-size: 0.8em;
+    text-align: center;
+    line-height: 1.5;
+    color: #d5a252;
+}
+
+.b-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -moz-transform: translate(-50%, -55%);
+    -ms-transform: translate(-50%, -55%);
+    -webkit-transform: translate(-50%, -55%);
+    transform: translate(-50%, -55%);
+    z-index: 25;
+    font-family: "titilliumtext22l_ltmedium";
+    opacity: 0;
+    visibility: hidden;
+    -moz-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+    min-width: 310px;
+}
+.b-popup.active {
+    opacity: 1;
+    visibility: visible;
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.b-popup .overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5000px;
+    height: 4000px;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.b-popup .btn-close {
+    text-transform: uppercase;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    padding-right: 32px;
+    color: #b1c7d4;
+}
+.b-popup .btn-close:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -13px;
+    right: 0;
+    content: '+';
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    font-size: 42px;
+    color: #fff;
+    line-height: 1;
+}
+
+.b-popup .btn:before, .b-popup .btn:after {
+    display: none;
+}
+.b-popup img {
+    max-width: 100%;
+}
+.b-popup .btn {
+    color: #fffef7;
+    font-size: 11px;
+    text-transform: uppercase;
+    display: inline-block;
+    padding: 2px;
+    border: 1px solid #c69846;
+    position: absolute;
+    left: 50%;
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    text-decoration: none;
+    background: none;
+    line-height: 1.4;
+}
+.b-popup .btn:hover span {
+    background: transparent;
+    color: #c69846;
+}
+.b-popup .btn span {
+    background: #c69846;
+    padding: 6px 12px;
+    display: block;
+    -moz-transition: background 0.3s, color 0.3s;
+    -o-transition: background 0.3s, color 0.3s;
+    -webkit-transition: background 0.3s, color 0.3s;
+    transition: background 0.3s, color 0.3s;
+}
+
+
+.b-popup img {
+    height: auto;
+}
+
+.gift-card-block .gift-card-desc {
+    position: absolute;
+    bottom: 2%;
+    left: 10px;
+    right: 10px;
+    text-align: center;
+    color: #fff;
+    font-size: 9px;
+    padding: 0;
+}
+
+.gift-card-block  .btn-close {
+    font-size: 15px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.gift-card-block  a.btn:hover span {
+    background: #fff;
+}
+
+.gift-card-block  a.btn{
+    bottom: 9%;
+}
+
+.form-careers .form-fieldset.webform-component--availability .form-wrapper .fieldset-legend {
+  position: relative;
+  left: auto;
+  width: 100%;
+  border-radius: 0;
+  height: auto;
+  padding: 3px 0;
+  text-transform: uppercase;
+  line-height: normal;
+  font-size: 14px;
+  font-weight: 900;
+  margin-bottom: 20px;
+}
+
+.form-careers .form-fieldset.webform-component--availability .form-wrapper .form-item {
+  margin-bottom: 10px;
+}
+
+.form-careers .form-fieldset.webform-component--availability .form-wrapper .form-item:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.form-careers .form-fieldset.webform-component--availability .form-wrapper .form-item label{
+  float: left;
+  width: 23%;
+}
+
+.form-careers .form-fieldset.webform-component--availability .form-wrapper .form-item input[type="text"]{
+  width: 62%;
+  float: right;
+}
+
+

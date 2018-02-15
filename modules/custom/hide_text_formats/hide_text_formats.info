@@ -1,0 +1,6 @@
+name = Hide text formats
+description = Allow to hide text formats for textareas widgets.
+core = 7.x
+package = Wc
+
+dependencies[] = filter

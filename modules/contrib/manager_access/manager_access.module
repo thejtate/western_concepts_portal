@@ -1,0 +1,284 @@
+<?php
+/**
+ * @file
+ * Manager access
+ */
+
+define('MANAGER_ACCESS_TYPE_KEY', 'manager_accesscontent_type_');
+define('MANAGER_ACCESS_ROLE_KEY', 'manager_accesscontent_role_');
+define('MANAGER_ACCESS_FIELD_KEY', 'manager_accessfield_type_');
+define('MANAGER_ACCESS_MODULE_KEY', 'manager_accessmodule_type_');
+define('MANAGER_ACCESS_NODE_BASE_KEY', 'manager_accessnode_base_');
+
+/**
+ * Implements hook_menu().
+ */
+function manager_access_menu() {
+  // This is the minimum information you can provide for a menu item.
+  $items = array();
+  $items['admin/config/manager_access'] = array(
+    'title' => 'Manager Access',
+    'description' => 'Adjust manager access options.',
+    'position' => 'right',
+    'weight' => -5,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/manager_access/links'] = array(
+    'title' => 'Manager links settings',
+    'description' => 'Change how managers links behave.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('manager_access_links_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'manager_access.admin.inc',
+  );
+
+  $items['admin/config/manager_access/settings'] = array(
+    'title' => 'Manager access fields',
+    'type' => MENU_NORMAL_ITEM,
+    'access arguments' => array('administer manager_access settings'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('manager_access_admin_page_form'),
+    'file' => 'manager_access.admin.inc',
+  );
+
+  menu_cache_clear('manager_menu');
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function manager_access_permission() {
+  return array(
+    'access manager links' => array(
+      'title' => t('Use manager links'),
+      'description' => t('Use manager links to perform actions related to elements on a page.'),
+    ),
+    'access top manager menu' => array(
+      'title' => t('Access top manager menu'),
+      'description' => t('Display the administration menu at the top of each page.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_help().
+ */
+function manager_access_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#manager':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The manager links module displays links related to regions of pages on your site to users with <em>access manager links</em> permission.') . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Displaying manager links') . '</dt>';
+      $output .= '<dd>' . t('manager links give you quick access to tasks associated with regions of pages on your site.') . '</dd>';
+      $output .= '</dl>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function manager_access_theme($existing, $type, $theme, $path) {
+
+  $hooks = array();
+
+  $hooks['manager_access_admin_page_form'] = array(
+    'render element' => 'form',
+    'file' => 'manager_access.admin.inc',
+  );
+
+  $hooks['manager_links'] = array(
+    'arguments' => array('links' => NULL),
+  );
+
+  return $hooks;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function manager_access_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+  if (isset($form['#node_edit_form']) && $form['#node_edit_form']) {
+    $manager_accesssettings = variable_get('manager_accesssettings', array());
+    $node_type = $form['type']['#value'];
+    foreach ($user->roles as $role_id => $role) {
+      if (isset($manager_accesssettings[$role_id])) {
+        if (isset($manager_accesssettings[$role_id][$node_type])) {
+          foreach ($manager_accesssettings[$role_id][$node_type] as $field => $access) {
+            $form[$field]['#access'] = ($access) ? FALSE : TRUE;
+          }
+        }
+        if (isset($manager_accesssettings[$role_id][MANAGER_ACCESS_MODULE_KEY])) {
+          foreach ($manager_accesssettings[$role_id][MANAGER_ACCESS_MODULE_KEY] as $field => $access) {
+
+            $form[$field]['#access'] = ($access) ? FALSE : TRUE;
+          }
+        }
+        if (isset($manager_accesssettings[$role_id][$node_type]['textarea'])) {
+          $pieces = explode("\n", $manager_accesssettings[$role_id][$node_type]['textarea']);
+          foreach ($pieces as $key => $field) {
+            $field = trim($field);
+            $form[$field]['#access'] = FALSE;
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Theme function for creating manager links
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - links: array ( description => link).
+ *
+ * @return string
+ *   Html for manager links
+ */
+function theme_manager_links($variables) {
+  $output = '<div class="manager-links-region">
+                <div class="manager-links-wrapper">';
+  if (!empty($variables) && is_array($variables)) {
+    $output .= '<ul class="manager-links">';
+    foreach ($variables as $key => $value) {
+      if ((!empty($value['access']) && user_access($value['access'])) || empty($value['access'])) {
+
+        // If empty set defautl destination value.
+        if (!isset($value['options']['query'])) {
+          $value['options']['query'] = drupal_get_destination();
+        }
+        $output .= '<li class="manager-link-item-' . $key . '">';
+        $output .= l($value['title'], $value['path'], $value['options']);
+        $output .= '</li>';
+      }
+    }
+    $output .= '</ul>';
+  }
+  $output .= '</div>
+              </div>';
+  return $output;
+}
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function manager_access_preprocess_html(&$vars) {
+  if (module_exists('admin_menu')) {
+    if (user_access('access top manager menu') && !user_access("access administration menu")) {
+      drupal_add_css(drupal_get_path('module', 'admin_menu') . '/admin_menu.css');
+      if (module_exists('admin_menu_toolbar')) {
+        drupal_add_css(drupal_get_path('module', 'admin_menu') . '/admin_menu_toolbar/admin_menu_toolbar.css');
+      }
+
+      // Load menu builder functions.
+      module_load_include('inc', 'admin_menu');
+
+      $classes = 'admin-menu-site' . drupal_strtolower(preg_replace('/[^a-zA-Z0-9-]/', '-', $GLOBALS['cookie_domain']));
+      if (module_exists('overlay')) {
+        $classes .= ' overlay-displace-top';
+      }
+
+      // @todo Always output container to harden JS-less support.
+      $content['#prefix'] = '<div id="admin-menu" class="' . $classes . '"><div id="admin-menu-wrapper">';
+      $content['#suffix'] = '</div></div>';
+
+      $content['menu'] = admin_menu_links_menu(admin_menu_tree('manager_menu'));
+      $content['menu']['#theme'] = 'admin_menu_links';
+      // Ensure the menu tree is rendered between the icon and user links.
+      $content['menu']['#weight'] = 0;
+
+      // Add menu additions.
+      $content['user'] = admin_menu_links_users();
+      unset($content['user']['account']);
+      unset($content['user']['user-counter']);
+
+      $content = drupal_render($content);
+      $vars['page']['page_bottom']['manager_top_menu']['#markup'] = $content;
+      $vars['classes_array'][] = 'admin-menu';
+    }
+  }
+}
+
+
+/**
+ * Implrements hook_preprocess_views_view().
+ * defines $manager_links for view templates
+ */
+function manager_access_preprocess_views_view(&$vars) {
+  $options = variable_get('manager_links_view_types');
+  $types = (isset($vars['view']->filter['type']->value)) ? $vars['view']->filter['type']->value : array();
+  manager_access_generate_links($vars, $types, $options, 'view');
+}
+
+/**
+ * Implements hook_preprocess_node().
+ * defines $manager_links for node templates
+ */
+function manager_access_preprocess_node(&$vars) {
+  if (!$vars['teaser']) {
+    $options = variable_get('manager_links_node_types');
+    manager_access_generate_links($vars, array($vars['type'] => $vars['type']), $options);
+  }
+}
+
+/**
+ * Generate manager links
+ *
+ * @param array $vars
+ *   variables
+ * @param array $types
+ *   node types
+ * @param array $options
+ *   options
+ * @param string $entity_type
+ *   node or view
+ *
+ * @return array
+ *   variables
+ */
+function manager_access_generate_links(&$vars, $types, $options, $entity_type = 'node') {
+  // Nothing to do here if the user is not permitted to access manager links.
+  if (!user_access('access manager links')) {
+    return;
+  }
+
+  drupal_add_css(drupal_get_path('module', 'manager_access') . '/css/manager_links.css');
+  drupal_add_js(drupal_get_path('module', 'manager_access') . '/js/manager_access_links.js');
+
+  // Display manager links only for nodes selected on module configuration page.
+  $links = array();
+  if(is_string($types)) {
+    $types = array($types);
+  }
+  foreach ($types as $type => $value) {
+    if (($entity_type == 'node' && !empty($options[$type])) ||
+     ($entity_type == 'view' && !empty($options[$vars['name']]) && isset($vars['view']->filter['type']->value))) {
+
+      if (user_access('create ' . $type . ' content')) {
+        $type = preg_replace('/_/', '-', $type);
+        $links[] = array(
+          'title' => t("Add @node_type", array(
+            '@node_type' => preg_replace('/-/', ' ', $type))),
+          'path' => 'node/add/' . $type,
+        );
+      }
+    }
+  }
+  if (!empty($links) && (!isset($vars['teaser']) || !$vars['teaser'])) {
+    $vars['title_prefix']['manager_links'] = array(
+      '#type' => 'markup',
+      '#markup' => theme('manager_links', $links),
+      'weight' => -1,
+    );
+  }
+}

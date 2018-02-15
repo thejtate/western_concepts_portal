@@ -1,0 +1,434 @@
+.calendar-wrapper {
+  .views-exposed-form {
+    label {
+      font-weight: normal;
+    }
+  }
+  width: 1060px;
+  margin: 10px auto;
+  background: #fffef7;
+  @include box-shadow(0 0 10px #000);
+  position: relative;
+  padding: 30px 50px;
+  @include box-sizing(border-box);
+  &:before,
+  &:after {
+    @include pseudo-block();
+  }
+  &:before {
+    width: auto;
+    top: 0;
+    left: 50px;
+    right: 50px;
+    height: 24px;
+    background: url("../images/bg/bg_content_top.png") 50% 50% repeat-x;
+
+  }
+  &:after {
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    width: auto;
+    height: 5px;
+    background: url("../images/bg/bg_content_bottom.png") 50% 50% repeat-x;
+  }
+  .calendar-header {
+    position: relative;
+    .date-heading {
+      h3 {
+        @include font-size(42px);
+        font-family: $copse_regular;
+        font-weight: normal;
+        text-align: center;
+        color: #1e1e1e;
+        margin: 0;
+        line-height: 60px;
+        padding-bottom: 10px;
+      }
+    }
+    .pager {
+      margin: 0;
+      .date-prev,
+      .date-next {
+        padding: 0;
+        margin: 0;
+        display: block;
+        position: absolute;
+        top: 0;
+        .ajax-progress {
+          position: absolute;
+          top: 12px;
+        }
+        @include font-size(14px);
+        a {
+          text-decoration: none;
+          color: #7d7c79;
+          font-size: inherit;
+          font-family: $bitter_italic;
+          display: block;
+          position: relative;
+          padding-top: 30px;
+          padding-bottom: 22px;
+          &:before,
+          &:after {
+            @include pseudo-block($top: 0);
+          }
+        }
+      }
+      .date-prev {
+        left: -81px;
+        a {
+          padding-left: 80px;
+
+          &:before {
+            @include oneline-sprite-box($icons, icon_prev_cal);
+            left: 0;
+          }
+          &:hover {
+            &:before {
+              @include oneline-sprite($icons, icon_prev_cal_hover);
+            }
+          }
+        }
+        .ajax-progress {
+          left: 16px;
+        }
+      }
+      .date-next {
+        right: -81px;
+        a {
+          padding-right: 80px;
+          &:after {
+            @include oneline-sprite-box($icons, icon_next_cal);
+            right: 0;
+          }
+          &:hover {
+            &:after {
+              @include oneline-sprite($icons, icon_next_cal_hover);
+            }
+          }
+        }
+        .ajax-progress {
+          right: 16px;
+        }
+      }
+    }
+
+  }
+  .calendar-table {
+    width: 100%;
+    thead {
+      th {
+        border-bottom: none;
+        background: #cccbc2;
+        @include font-size(13px);
+        font-family: $tt_4;
+        text-transform: uppercase;
+        text-align: center;
+        color: #fffef7;
+        line-height: 38px;
+        border-top: 1px solid #cccbc2;
+        border-bottom: 1px solid #cccbc2;
+        width: 136px;
+      }
+    }
+    tbody {
+      td {
+        background: #f2f1e6;
+        border: none;
+        border-top: 1px solid #fbfaf2;
+        border-bottom: 1px solid #fbfaf2;
+        border-right: 1px solid #fbfaf2;
+        padding: 6px;
+        vertical-align: top;
+        &.date-box {
+          border-bottom: none;
+          text-align: left;
+          @include font-size(20px);
+          font-family: $tt_2;
+          color: #b3b2aa;
+        }
+        &.single-day {
+          border-top: none;
+        }
+        .item {
+          a {
+            @include font-size(14px);
+            text-decoration: none;
+            font-family: $tt_4;
+          }
+        }
+        .cutoff {
+          display: none;
+        }
+        &.empty {
+          .inner {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+  .restaurant-sushi_neko,
+  .restaurant-musashis,
+  .restaurant-will_rogers_theatre,
+  .restaurant-lobby_cafe_bar,
+  .restaurant-tasting_room,
+  .restaurant-coach_house {
+    a {
+      color: inherit;
+      @include font-size(14px);
+      font-family: $tt_6;
+      line-height: 20px;
+      text-transform: capitalize;
+      display: block;
+      padding: 0 0 2px 24px !important;
+      position: relative;
+      &:before {
+        @include pseudo-block($top: 0, $left: 0);
+        margin: 1px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+
+  .restaurant-sushi_neko {
+    color: #e6c10b;
+    a {
+      &:before {
+        @include oneline-sprite($icons, icon_sushi_ch);
+      }
+    }
+    .checker {
+      span {
+        @include oneline-sprite($icons, icon_sushi_un);
+        &.checked {
+          @include oneline-sprite($icons, icon_sushi_ch);
+
+        }
+      }
+    }
+  }
+  .restaurant-musashis {
+    color: #cc2929;
+    a {
+      &:before {
+        @include oneline-sprite($icons, icon_musashi_ch);
+      }
+    }
+    .checker {
+      span {
+        @include oneline-sprite($icons, icon_musashi_un);
+
+        &.checked {
+          @include oneline-sprite($icons, icon_musashi_ch);
+
+        }
+      }
+    }
+  }
+  .restaurant-will_rogers_theatre {
+    color: #2da7b3;
+    a {
+      &:before {
+        @include oneline-sprite($icons, icon_will_ch);
+      }
+    }
+    .checker {
+      span {
+        @include oneline-sprite($icons, icon_will_un);
+
+        &.checked {
+          @include oneline-sprite($icons, icon_will_ch);
+
+        }
+      }
+    }
+  }
+  .restaurant-lobby_cafe_bar {
+    color: #62b37d;
+    a {
+      &:before {
+        @include oneline-sprite($icons, icon_lobby_ch);
+      }
+    }
+    .checker {
+      span {
+        @include oneline-sprite($icons, icon_lobby_un);
+
+        &.checked {
+          @include oneline-sprite($icons, icon_lobby_ch);
+
+        }
+      }
+    }
+  }
+  .restaurant-tasting_room {
+    color: #d97d21;
+    a {
+      &:before {
+        @include oneline-sprite($icons, icon_tasting_ch);
+      }
+    }
+    .checker {
+      span {
+        @include oneline-sprite($icons, icon_tasting_un);
+
+        &.checked {
+          @include oneline-sprite($icons, icon_tasting_ch);
+
+        }
+      }
+    }
+  }
+  .restaurant-coach_house {
+    color: #b3628a;
+    a {
+      &:before {
+        @include oneline-sprite($icons, icon_coach_house_ch);
+      }
+    }
+    .checker {
+      span {
+        @include oneline-sprite($icons, icon_coach_house_un);
+
+        &.checked {
+          @include oneline-sprite($icons, icon_coach_house_ch);
+
+        }
+      }
+    }
+  }
+  .calendar-footer {
+    margin: 20px 0;
+    position: relative;
+    .bef-checkboxes {
+      display: table;
+      width: 100%;
+    }
+
+    .form-item {
+
+      .form-item {
+        vertical-align: middle;
+        display: table-cell;
+        text-align: left;
+
+        text-align: center;
+      }
+    }
+    .form-item {
+      position: relative;
+      label {
+        @include font-size(14px);
+        font-family: $tt_4;
+        cursor: pointer;
+        margin-left: 5px;
+      }
+    }
+    .checker {
+      cursor: pointer;
+      display: inline-block;
+      vertical-align: top;
+      input {
+        @include opacity(0);
+        cursor: pointer;
+      }
+      span {
+        display: block;
+        width: 20px;
+        height: 20px;
+        &.checked {
+          margin: 1px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+    }
+    .views-exposed-form {
+      .views-exposed-widget {
+        float: none;
+        padding: 0;
+      }
+    }
+
+    .ajax-progress {
+      background: url("../images/bg/bg_transparent_b.png") 0 0 repeat;
+      border: 1px solid #CCCBC2;
+      top: -20px;
+      bottom: -20px;
+      right: 0;
+      left: 0;
+      width: auto;
+      display: block;
+      position: absolute;
+      .throbber {
+        @include border-radius(4px);
+        background-color: #fff;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 4px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -14px;
+        margin-left:-14px;
+      }
+    }
+
+  }
+  .calendar-calendar .month-view .full td.single-day div.monthview,
+  .calendar-calendar .week-view .full td.single-day div.weekview,
+  .calendar-calendar .day-view .full td.single-day div.dayview {
+    background-color: transparent;
+  }
+  .calendar-calendar .month-view .full tr td.single-day.today {
+    border-bottom: 2px solid #C7993E;
+  }
+  .calendar-calendar .month-view .full td.date-box.today {
+    border-width: 2px 2px 0px 2px;
+    border-style: solid;
+    border-color: #C7993E;
+  }
+  .calendar-calendar .month-view .full tr td.today {
+    border-left: 2px solid #C7993E;
+    border-right: 2px solid #C7993E;
+  }
+  .calendar-calendar div.calendar {
+    font-size: inherit;
+  }
+  .calendar-calendar td a {
+    font-weight: normal;
+  }
+  .view {
+    .date-nav-wrapper {
+      .date-next {
+        a {
+          margin-right: 0;
+          font-weight: normal;
+        }
+      }
+      .date-prev {
+        a {
+          margin-left: 0;
+          font-weight: normal;
+        }
+      }
+    }
+  }
+  .ajax-progress {
+    display: inline-block;
+    padding: 4px;
+    @include border-radius(4px);
+    background: #fff;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #CCCBC2;
+  }
+  .ajax-progress .throbber {
+    background: rgba(0, 0, 0, 0) url("../images/throbber_min.gif") no-repeat 50% 50%;
+    float: left;
+    height: 20px;
+    margin: 2px;
+    width: 20px;
+  }
+}

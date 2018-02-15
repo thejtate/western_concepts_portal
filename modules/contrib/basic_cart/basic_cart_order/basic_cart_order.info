@@ -1,0 +1,46 @@
+name = Basic Cart Order
+description = Stores every basic cart order in the database.
+core = 7.x
+package = Basic Cart
+php = 5.2.4
+dependencies[] = basic_cart
+dependencies[] = features
+dependencies[] = menu
+dependencies[] = strongarm
+dependencies[] = views
+features[ctools][] = strongarm:strongarm:1
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:1
+features[field][] = node-order-body
+features[field][] = node-order-field_address
+features[field][] = node-order-field_city
+features[field][] = node-order-field_email
+features[field][] = node-order-field_phone
+features[field][] = node-order-field_total_price
+features[field][] = node-order-field_zipcode
+features[menu_custom][] = management
+features[menu_links][] = management:admin/structure/orders
+features[node][] = order
+features[user_permission][] = administer basic cart
+features[user_permission][] = use basic cart
+features[user_permission][] = view basic cart orders
+features[variable][] = comment_anonymous_order
+features[variable][] = comment_default_mode_order
+features[variable][] = comment_default_per_page_order
+features[variable][] = comment_form_location_order
+features[variable][] = comment_order
+features[variable][] = comment_preview_order
+features[variable][] = comment_subject_field_order
+features[variable][] = menu_options_order
+features[variable][] = menu_parent_order
+features[variable][] = node_options_order
+features[variable][] = node_preview_order
+features[variable][] = node_submitted_order
+features[views_view][] = orders
+
+; Information added by drupal.org packaging script on 2012-09-17
+version = "7.x-2.0-rc1"
+core = "7.x"
+project = "basic_cart"
+datestamp = "1347899211"
+

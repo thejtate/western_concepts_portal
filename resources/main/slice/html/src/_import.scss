@@ -1,0 +1,63 @@
+// #Import 
+//$experimental-support-for-svg: true;
+// ##Import Modules
+@import "compass/css3";
+@import "compass/css3/hyphenation";
+@import "compass/css3/border-radius";
+@import "compass/utilities/general/clearfix";
+@import "compass/utilities/sprites/base";
+@import "compass/utilities/sprites/sprite-img";
+@import "compass/typography/text/ellipsis";
+@import "compass/typography/text/nowrap";
+@import "compass/css3/transition";
+@import "compass/css3/user-interface";
+@import "compass/css3/images";
+@import "compass/css3/text-shadow";
+@import "blueprint/colors";
+
+
+//color
+$brown: #c7993e;
+$white : #fffef7;
+$gray: #595957;
+
+//width
+$width_content : 1092px;
+
+//font-size
+$base_fs_em : 1em;
+$base_fs_px : 16px;
+
+//fonts
+$bitter_bold                 : 'bitterbold';
+$bitter_italic               : 'bitteritalic';
+$bitter_regular              : 'bitterregular';
+$copse_regular               : 'copseregular';
+$reverie_bold_italicBdIt     : 'reverie_bold_italicBdIt';
+$reverie_boldbold            : 'reverie_boldbold';
+$reverie_italicitalic        : 'reverie_italicitalic';
+$reverie_light_italicitalic  : 'reverie_light_italicitalic';
+$reverie_lightregular        : 'reverie_lightregular';
+$reverie_regular             : 'reverieregular';
+$tt_2                        : 'titilliumtext22llight';
+$tt_3                        : 'titilliumtext22l_rgregular';
+$tt_4                        : 'titilliumtext22l_ltmedium';
+$tt_6                        : 'titilliumtext22lxbold';
+$din-bold                    : 'DIN-BOLD';
+$din-regular                 : 'din-regular';
+
+
+// #Sprites
+//$horiz: sprite-map("horiz/*.png", $layout: 'vertical');
+$icons: sprite-map("icons/*.png", $layout: 'smart');
+
+//background: sprite($icons, line) no-repeat; 
+
+// ##Import mixins
+
+@import "com/base/mixins-default";
+
+
+
+
+

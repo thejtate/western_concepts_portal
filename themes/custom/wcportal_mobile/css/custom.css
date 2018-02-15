@@ -1,0 +1,240 @@
+.form-site-custom .hide-title .form-item label {
+    display: none;
+}
+
+.form-site-custom .messages.error {
+    font-size: 12px;
+}
+
+.page.page-progressive-dinner .slide-3 .text-circle .text {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.page-user {
+    background: #ebeadf;
+}
+
+.wc-progressive-dinner-reservation-checkout-overlay,
+.wc-rewards-card-members-checkout-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.wc-progressive-dinner-reservation-checkout-overlay div,
+.wc-rewards-card-members-checkout-overlay div {
+    position: absolute;
+    top: 50%;
+    margin-top: -32px;
+    left: 50%;
+    margin-left: -135px;
+}
+
+.form-checkout .hide-title .form-item label {
+    display: none;
+}
+
+.form-checkout .messages.error ul li {
+    font-size: 0.8em;
+}
+
+/*card rewards - birthday*/
+
+.form-site-custom .birthday-date-select .form-select {
+    width: 120px;
+}
+
+.form-site-custom .birthday-date-select .form-type-select {
+    float: left;
+    width: auto;
+}
+
+.form-site-custom .birthday-date-select .form-item-personal-information-birthday-year {
+    margin-left: 8px;
+}
+
+.form-site-custom .birthday-date-select label {
+    color: #595957;
+    font-family: 'sans-serif';
+    float: left;
+    margin-top: 17px;
+}
+
+#edit-personal-information-birthday {
+    float: right;
+    padding-right: 0px;
+}
+
+.form-site-custom .birthday-date-select .form-item-personal-information-birthday {
+    width: 100%;
+}
+
+.outer-wrapper .construciton-link {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #e87903;
+}
+
+.outer-wrapper .construciton-link img {
+    max-width: 100%;
+    height: auto;
+}
+.page.page-home .list-sites .site-coach-house {
+  background: url('../images/bg/hutch-bg.jpg');
+}
+.page.page-home .list-sites .site-coach-house .btn-dd {
+  padding: 4px 0;
+}
+.page.page-home .list-sites .site-coach-house h3 {
+  background: url('../images/logos/the-hutch-logo-a.png') no-repeat;
+  width: 80px;
+  height: 42px;
+}
+.page.page-home .list-sites .site-coach-house .desc {
+  color: #e8c1a5;
+}
+/* Shop */
+.page-shop .discount p {
+    font-size: 0.8em;
+    text-align: center;
+    line-height: 1.5;
+    color: #d5a252;
+}
+
+.header-inner .card img {
+    width: 90px;
+    height: auto;
+}
+
+.b-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -moz-transform: translate(-50%, -55%);
+    -ms-transform: translate(-50%, -55%);
+    -webkit-transform: translate(-50%, -55%);
+    transform: translate(-50%, -55%);
+    z-index: 25;
+    font-family: "titilliumtext22l_ltmedium";
+    opacity: 0;
+    visibility: hidden;
+    -moz-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+    min-width: 310px;
+}
+.b-popup.active {
+    opacity: 1;
+    visibility: visible;
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.b-popup .overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5000px;
+    height: 4000px;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.b-popup .btn-close {
+    text-transform: uppercase;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    padding-right: 32px;
+    color: #b1c7d4;
+}
+.b-popup .btn-close:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -13px;
+    right: 0;
+    content: '+';
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    font-size: 42px;
+    color: #fff;
+    line-height: 1;
+}
+
+.b-popup .btn:before, .b-popup .btn:after {
+    display: none;
+}
+.b-popup img {
+    max-width: 100%;
+}
+.b-popup .btn {
+    color: #fffef7;
+    font-size: 11px;
+    text-transform: uppercase;
+    display: inline-block;
+    padding: 2px;
+    border: 1px solid #c69846;
+    position: absolute;
+    left: 50%;
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    text-decoration: none;
+    background: none;
+    line-height: 1.4;
+}
+.b-popup .btn:hover span {
+    background: transparent;
+    color: #c69846;
+}
+.b-popup .btn span {
+    background: #c69846;
+    padding: 6px 12px;
+    display: block;
+    -moz-transition: background 0.3s, color 0.3s;
+    -o-transition: background 0.3s, color 0.3s;
+    -webkit-transition: background 0.3s, color 0.3s;
+    transition: background 0.3s, color 0.3s;
+}
+
+.b-popup img {
+    height: auto;
+}
+
+.gift-card-block .gift-card-desc {
+    position: absolute;
+    bottom: 2%;
+    left: 10px;
+    right: 10px;
+    text-align: center;
+    color: #fff;
+    font-size: 9px;
+    padding: 0;
+}
+
+.gift-card-block  .btn-close {
+    font-size: 15px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.gift-card-block  a.btn:hover span {
+    background: #fff;
+}
+
+.gift-card-block  a.btn{
+    bottom: 9%;
+}

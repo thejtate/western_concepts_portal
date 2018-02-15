@@ -1,0 +1,8 @@
+name = Tasting room events
+description = Tasting room events administration functionality
+core = 7.x
+package = Wc
+
+
+dependencies[] = wc_events
+dependencies[] = wcportal_custom

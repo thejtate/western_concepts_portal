@@ -1,0 +1,11 @@
+name = Payjunction payment
+description = Payjunction payment
+package = custom
+core = 7.x
+version = 7.x-1.x
+
+files[] = classes/Client.php
+files[] = classes/Exception.php
+files[] = classes/ReceiptClient.php
+files[] = classes/TransactionClient.php
+

@@ -1,0 +1,6 @@
+name = Tabs to contextual
+description = Move privary tabs (edit, view) to contextual link
+core = 7.x
+package = Custom
+
+dependencies[] = contextual

@@ -1,0 +1,120 @@
+
+
+.share-wrapper {
+  float: left;
+  .title-share {
+
+  }
+  .item-list {
+    float: left;
+    .list-share {
+      list-style: none;
+      margin: 0;
+      padding: 14px 84px 0 0;
+
+      li {
+        display: block;
+        float: left;
+        margin: 0;
+        a {
+          display: block;
+          width: 42px;
+          height: 42px;
+          @include hide-text();
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+  &.share-popup {
+    text-align: center;
+    float: none;
+    .item-list {
+      float: none;
+      display: inline-block;
+      vertical-align: top;
+
+      .list-share {
+        margin: 0;
+        padding: 0;
+        li {
+          a {
+            margin: 4px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.list-share {
+  .item-facebook {
+    a {
+      @include oneline-sprite($icons, icon_facebook);
+      &:hover {
+        @include oneline-sprite($icons, icon_facebook_hover);
+      }
+      &:active {
+        @include oneline-sprite($icons, icon_facebook_active);
+      }
+    }
+  }
+  .item-twitter {
+    a {
+      @include oneline-sprite($icons, icon_twitter);
+      &:hover {
+        @include oneline-sprite($icons, icon_twitter_hover);
+      }
+      &:active {
+        @include oneline-sprite($icons, icon_twitter_active);
+      }
+    }
+  }
+  .item-mail {
+    a {
+      @include oneline-sprite($icons, icon_mail);
+      &:hover {
+        @include oneline-sprite($icons, icon_mail_hover);
+      }
+      &:active {
+        @include oneline-sprite($icons, icon_mail_active);
+      }
+    }
+  }
+  .share-popup & {
+    .item-facebook {
+      a {
+        @include oneline-sprite($icons, icon_facebook_p);
+        &:hover {
+          @include oneline-sprite($icons, icon_facebook_hover_p);
+        }
+        &:active {
+          @include oneline-sprite($icons, icon_facebook_p);
+        }
+      }
+    }
+    .item-twitter {
+      a {
+        @include oneline-sprite($icons, icon_twitter_p);
+        &:hover {
+          @include oneline-sprite($icons, icon_twitter_hover_p);
+        }
+        &:active {
+          @include oneline-sprite($icons, icon_twitter_p);
+        }
+      }
+    }
+    .item-mail {
+      a {
+        @include oneline-sprite($icons, icon_mail_p);
+        &:hover {
+          @include oneline-sprite($icons, icon_mail_hover_p);
+        }
+        &:active {
+          @include oneline-sprite($icons, icon_mail_p);
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}

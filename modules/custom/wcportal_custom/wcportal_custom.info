@@ -1,0 +1,7 @@
+name = Wcportal custom
+description = Western concepts portal site custom functionality
+core = 7.x
+package = Wc
+
+dependencies[] = wc_payment
+dependencies[] = wc_shop

@@ -1,0 +1,64 @@
+<?php
+/**
+ * @file module functionality
+ */
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function hide_text_formats_field_widget_form_alter(&$element, &$form_state, $context) {
+  
+  if(!empty($context['instance']['widget']['type']) && in_array($context['instance']['widget']['type'], hide_text_formats_formatter_supported_widgets())) {
+    if(!empty($context['instance']['widget']['settings']['use_default_formatter'])
+      && $form_state['build_info']['form_id'] != 'field_ui_field_edit_form') {
+      $element['#after_build'][] = 'hide_text_formats_pre_render_hide_formats';
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function hide_text_formats_form_field_ui_field_edit_form_alter(&$form, &$form_state) {
+  $instance = $form['#instance'];
+  if (in_array($instance['widget']['type'], hide_text_formats_formatter_supported_widgets())) {
+    $form['instance']['widget']['settings'] += array('use_default_formatter' => array(
+      '#type' => 'checkbox',
+      '#title' => t('Use default text format for widget, hide other settings'),
+      '#default_value' => $instance['widget']['settings']['use_default_formatter'],
+      '#weight' => 17,
+    ));
+  }
+}
+
+/**
+ * Return array of supported widgets for hiding settings
+ * @return array
+ */
+function hide_text_formats_formatter_supported_widgets() {
+  return array('text_textarea');
+}
+
+/**
+ * Implements hook_field_widget_info_alter().
+ */
+function hide_text_formats_field_widget_info_alter(&$info) {
+  foreach (hide_text_formats_formatter_supported_widgets() as $widget) {
+    $info[$widget]['settings']['use_default_formatter'] = 0;
+  }
+}
+
+/**
+ * Hide Text formats options
+ */
+function hide_text_formats_pre_render_hide_formats($element) {
+  if(!empty($element['format'])) {
+    $element['format']['format']['#value'] = $element['format']['format']['#default_value'];
+    //$form[LANGUAGE_NONE][0]['format']['format']['#access'] = FALSE;
+    $element['format']['format']['#prefix'] = '<div style="display: none;">';
+    $element['format']['format']['#suffix'] = '</div>';
+    $element['format']['help']['#access'] = FALSE;
+    $element['format']['guidelines']['#access'] = FALSE;
+  }
+  return $element;
+}

@@ -1,0 +1,75 @@
+<?php
+/**
+ * @file Payjunction payment
+ */
+
+/**
+ * Send payment Transaction.
+ *
+ * @param string $endpoint_url
+ * @param string $username
+ * @param string $password
+ * @param string $appkey
+ *
+ * @param array $data
+ *  Required keys:
+ *    'cardNumber'
+ *    'cardExpMonth'
+ *    'cardCvv'
+ *    'amountBase'
+ * @see https://developer.payjunction.com/documentation/process-a-transaction/
+ *
+ * @return array result info
+ */
+function payjunction_payment_pay($endpoint_url, $username, $password, $appkey, $data) {
+
+  payjunction_payment_include_classes();
+
+  try {
+
+    $pj = new PayjunctionClient(
+      array(
+        'endpoint_url' => $endpoint_url,
+        'username' => $username,
+        'password' => $password,
+        'appkey' => $appkey,
+      )
+    );
+
+    $response = $pj->transaction()->create($data);
+
+    if(!empty($response->response->approved)) {
+      return array('status' => TRUE, 'message' => '', 'response' => $response);
+    } else {
+      $error_message = !empty($response->response->message) ? $response->response->message : t('There was a problem with the request');
+      return array('status' => FALSE, 'message' => $error_message, 'response' => $response);
+    }
+
+  } catch (PayjunctionException $e) {
+
+    $error_response = $e->getResponse();
+    //Prepare error string, collect all messages
+    $error_messages = '';
+    if(!empty($error_response->errors)) {
+      foreach($error_response->errors as $error) {
+        if(!empty($error->message)) {
+          $error_messages .= !empty($error_messages) ? "\n" : "";
+          $error_messages .= $error->message;
+        }
+      }
+    }
+
+    return array('status' => FALSE, 'message' => $error_messages, 'response' => $error_response);
+  }
+
+}
+
+/**
+ * Include module classes.
+ */
+function payjunction_payment_include_classes() {
+  module_load_include('php', 'payjunction_payment', 'classes/PayjunctionClient');
+  module_load_include('php', 'payjunction_payment', 'classes/PayjunctionException');
+  module_load_include('php', 'payjunction_payment', 'classes/PayjunctionReceiptClient');
+  module_load_include('php', 'payjunction_payment', 'classes/TransactionClient');
+}

@@ -1,0 +1,455 @@
+<?php
+/**
+ * @file Wc payment functionality
+ */
+
+define('ORDER_STATUS_FAILED', 'Failed');
+define('ORDER_STATUS_SUCCESS', 'Success');
+define('ORDER_STATUS_IN_PROGRESS', 'In Progress');
+define('ORDER_STATUS_COMPLETE', 'Complete');
+define('ORDER_STATUS_TEST_FAILED', 'Test mode: Failed');
+define('ORDER_STATUS_TEST_SUCCESS', 'Test mode: Success');
+
+/**
+ * Implements hook_menu().
+ */
+function wc_payment_menu() {
+  $items = array();
+
+  $items['admin/config/wc_payment'] = array(
+    'title' => 'WC Payment',
+    'position' => 'right',
+    'weight' => -5,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer wc payment module'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/wc_payment/settings'] = array(
+    'title' => 'Payment Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wc_payment_admin_settings'),
+    'access arguments' => array('administer wc payment module'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'wc_payment.admin.inc',
+  );
+
+
+  $items['admin/config/wc_payment/wc-orders'] = array(
+    'title' => 'Orders',
+    'page callback' => 'wc_payment_orders',
+    'access arguments' => array('administer wc payment module'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'wc_payment.orders.inc',
+  );
+
+  $items['wc-payment/order/%/%ctools_js'] = array(
+    'title' => 'Order',
+    'page callback' => 'wc_payment_order_view',
+    'page arguments' => array(2, 3),
+    'access arguments' => array('administer wc payment module'),
+    'type' => MENU_CALLBACK,
+    'file' => 'wc_payment.orders.inc',
+  );
+  return $items;
+}
+
+
+/**
+ * Implements hook_permission().
+ * @return array
+ */
+function wc_payment_permission() {
+  return array(
+    'administer wc payment module' => array(
+      'title' => t('Administer Wc Payment module'),
+      'description' => t('Perform administration tasks for Wc Payment module.'),
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function wc_payment_theme() {
+  $path = drupal_get_path('module', 'wc_payment');
+  return array(
+    'wc_payment_order' => array(
+      'variables' => array('order' => NULL),
+      'path' => $path . '/templates',
+      'template' => 'wc_payment_order',
+    ),
+  );
+}
+
+/**
+ * Make payment
+ * @param array $data
+ *   array(
+ *    'first_name' => "Mark",
+ *    'last_name' => "Jordan",
+ *    'address' => "8320 Test St",
+ *    'city' => "Santa Barbara",
+ *    'state' => "OK",
+ *    'zip' => "12345",
+ *    'email' => "user@gmail.com",
+ *    'phone' => '011-011-11-11',
+ *    'company' => '',
+ *
+ *    'number' => "4444333322221111",
+ *    'exp_month' => "12",
+ *    'exp_year' => "12",
+ *    'cvs' => "999",
+ *    'card_name' => 'Mark Jordan',
+ *    'amount' => "2.99",
+ *    'notes' => "test_notes1", // marker: type of payment (store, rewards, dinner, etc)
+ *    'description' => '', // description for logs
+ *   )
+ *
+ * @return array
+ *   array('status', 'message', 'data' => array())
+ */
+function wc_payment_make_payment($data = array()){
+  module_load_include("inc", "wc_payment","includes/quicklink");
+
+  $number = wc_payment_prepare_data($data, "number", "");
+  $exp_month = wc_payment_prepare_data($data, "exp_month", "");
+  $exp_year = wc_payment_prepare_data($data, "exp_year", "");
+  $cvs = wc_payment_prepare_data($data, "cvs", "");
+  $card_name = wc_payment_prepare_data($data, "card_name", "");
+  $address = wc_payment_prepare_data($data, "address", "");
+  $city = wc_payment_prepare_data($data, "city", "");
+  $state = wc_payment_prepare_data($data, "state", "");
+  $zip = wc_payment_prepare_data($data, "zip", 0);
+  $amount = wc_payment_prepare_data($data, "amount", 0);
+  $transaction_id = "";
+  $notes = wc_payment_prepare_data($data, "notes", "");
+  $description = wc_payment_prepare_data($data, "description", "");
+  $order_data = wc_payment_prepare_data($data, "order_data", "");
+
+  $billingFirstName = wc_payment_prepare_data($data, "billing_first_name", "");
+  $billingLastName = wc_payment_prepare_data($data, "billing_last_name", "");
+
+  if (
+    empty($number) ||
+    empty($exp_month) ||
+    empty($exp_year) ||
+    empty($cvs) ||
+    empty($card_name) ||
+    empty($address) ||
+    empty($city) ||
+    empty($state) ||
+    empty($zip)) {
+    return array('status' => FALSE, 'message' => t('Please fill required fields.'), 'data' => array());
+  }
+
+  if(variable_get('wc_payment_payjunction_api_version', 'old_quick') == 'old_quick') {
+    return wc_payment_payjunction_quick_pay($data, $card_name, $number, $exp_month, $exp_year, $cvs, $address, $city, $state, $zip, $amount, $transaction_id, $notes, $order_data, $description);
+  } else {
+    return wc_payment_payjunction_new_api_pay($data, $card_name, $number, $exp_month, $exp_year, $cvs, $address, $city, $state, $zip, $amount, $transaction_id, $notes, $order_data, $description, $billingFirstName, $billingLastName);
+  }
+
+}
+
+/**
+ * Payjunction quick API pay
+ */
+function wc_payment_payjunction_quick_pay($data, $card_name, $number, $exp_month, $exp_year, $cvs, $address, $city, $state, $zip, $amount, $transaction_id, $notes, $order_data, $description) {
+  $is_test_mode = variable_get('wc_payment_testing', 0);
+  if ($is_test_mode) {
+    // test
+    $server = variable_get('wc_payment_test_url', "https://www.payjunctionlabs.com/quick_link");
+    $login = variable_get('wc_payment_test_login', "pj-ql-01");
+    $password = variable_get('wc_payment_test_password', "pj-ql-01p");
+  }
+  else {
+    // live
+    $server = variable_get('wc_payment_url', "https://www.payjunction.com/quick_link");
+    $login = variable_get('wc_payment_login', "");
+    $password = variable_get('wc_payment_password', "");
+  }
+
+  $quicklink = new QuickLink($server, $login, $password);
+
+  $response = $quicklink->Charge($card_name, $number, $exp_month, $exp_year, $cvs, $address, $city, $state, $zip, $amount, $transaction_id, $notes);
+
+  $log = wc_payment_prepare_log($response);
+
+  // if not valid result
+  if (!$quicklink->validateResponce($response, $amount, $notes)) {
+    $order_status = ($is_test_mode) ? ORDER_STATUS_TEST_FAILED : ORDER_STATUS_FAILED;
+    $response['pid'] = wc_payment_save_transaction($response, $data, "portal", $order_data, $order_status, $description, $log);
+
+    $message = t("Sorry, transaction failed. The system reports the following error:") . "<br>";
+    $message .= $quicklink->getError() . "<br><br>";
+    $message .= t("We’re sorry, there was a problem processing your payment. <br> Please email @email and we will contact you to finalize your payment.", array("@email" => variable_get('site_mail', ini_get('sendmail_from'))));
+    return array('status' => FALSE, 'message' => $message, 'data' => $response);
+  }
+
+  $order_status = ($is_test_mode) ? ORDER_STATUS_TEST_SUCCESS : ORDER_STATUS_SUCCESS;
+  $response['pid'] = wc_payment_save_transaction($response, $data, "portal", $order_data, $order_status, $description, $log);
+  return array('status' => TRUE, 'message' => '', 'data' => $response);
+}
+
+/**
+ * Payjunction new API pay
+ */
+function wc_payment_payjunction_new_api_pay($data, $card_name, $number, $exp_month, $exp_year, $cvs, $address, $city, $state, $zip, $amount, $transaction_id, $notes, $order_data, $description, $billingFirstName = '', $billingLastName = '') {
+  $is_test_mode = variable_get('wc_payment_testing', 0);
+  if ($is_test_mode) {
+    // test
+    $server = variable_get('wc_payment_test_new_api_url', "https://api.payjunctionlabs.com");
+    $login = variable_get('wc_payment_test_login', "pj-ql-01");
+    $password = variable_get('wc_payment_test_password', "pj-ql-01p");
+    $app_key = variable_get('wc_payment_payjunction_test_app_key', "70ef7234-c45d-472b-92b8-e8f494901a84");
+  }
+  else {
+    // live
+    $server = variable_get('wc_payment_new_api_url', "https://api.payjunction.com");
+    $login = variable_get('wc_payment_login', "");
+    $password = variable_get('wc_payment_password', "");
+    $app_key = variable_get('wc_payment_payjunction_app_key', "");
+  }
+
+  $payment_info = array(
+    'cardNumber' => $number,
+    'cardExpMonth' => $exp_month,
+    'cardExpYear' => $exp_year,
+    'cardCvv' => $cvs,
+    'amountBase' => number_format($amount, 2),
+    'note' => $notes,
+    'billingAddress' => $address,
+    'billingCity' => $city,
+    'billingState' => $state,
+    'billingZip' => $zip,
+  );
+
+  if(!empty($billingFirstName)) {
+    $payment_info['billingFirstName'] = $billingFirstName;
+  }
+
+  if(!empty($billingLastName)) {
+    $payment_info['billingLastName'] = $billingLastName;
+  }
+
+  $result = payjunction_payment_pay($server, $login, $password, $app_key, $payment_info);
+
+  $result['data'] = !empty($result['response']) ? (array) $result['response'] : array();
+
+  //add response values by keys in old format, to store in database
+  $result['data']['dc_transaction_id'] = wc_payment_prepare_data($result['data'], "transactionId", "0");
+  $result['data']['dc_response_code'] = !empty($result['response']->response->code) ? $result['response']->response->code : "";
+  $result['data']['dc_capture_amount'] = wc_payment_prepare_data($result['data'], "amountTotal", "0");
+  if(empty($result['data']['dc_capture_amount'])) {
+    $result['data']['dc_capture_amount'] = $amount;
+  }
+
+  //Prepare formated transaction date
+  $result['data']['dc_transaction_date'] = "";
+  $date_string = wc_payment_prepare_data($result['data'], "created", "");
+  if(!empty($date_string)) {
+    $date_obj = new DateObject($date_string);
+    if(!empty($date_obj)) {
+      $result['data']['dc_transaction_date'] = $date_obj->format(DATE_FORMAT_DATETIME);
+    }
+  } else {
+    $date_obj = new DateObject(REQUEST_TIME);
+    $result['data']['dc_transaction_date'] = $date_obj->format(DATE_FORMAT_DATETIME);
+  }
+
+  if(!$result['status']) {
+    $result['data']['error_message'] = $result['message'];
+  }
+
+  $log = wc_payment_prepare_log($result['data']);
+  // Test mode
+//  $result['status'] = TRUE;
+  if(!$result['status']) {
+    $order_status = ($is_test_mode) ? ORDER_STATUS_TEST_FAILED : ORDER_STATUS_FAILED;
+
+    $result['data']['pid'] = wc_payment_save_transaction($result['data'], $data, "portal", $order_data, $order_status, $description, $log, $result['message']);
+    $message = t("Sorry, transaction failed. The system reports the following error:") . "<br>";
+    $message .= $result['message'] . "<br><br>";
+    $message .= t("We’re sorry, there was a problem processing your payment. <br> Please email @email and we will contact you to finalize your payment.", array("@email" => variable_get('site_mail', ini_get('sendmail_from'))));
+
+    $result['message'] = $message;
+
+  } else {
+    $order_status = ($is_test_mode) ? ORDER_STATUS_TEST_SUCCESS : ORDER_STATUS_SUCCESS;
+    $result['data']['pid'] = wc_payment_save_transaction($result['data'], $data, "portal", $order_data, $order_status, $description, $log);
+
+    $uns_order_data = unserialize($order_data);
+    $uns_products = isset($uns_order_data['cart']) ? $uns_order_data['cart'] : array();
+    foreach($uns_products as $product) {
+      $uns_node = isset($product['node']) ? $product['node'] : '';
+      if ($uns_node) {
+        $gift_card = isset($uns_node->field_product_gift[LANGUAGE_NONE][0]['value']) ?
+          $uns_node->field_product_gift[LANGUAGE_NONE][0]['value'] : 0;
+        if ($gift_card) {
+          $_SESSION['clickserv_pixel'] = TRUE;
+        }
+      }
+    }
+  }
+
+  return $result;
+}
+
+/**
+ * Save transaction to database
+ *
+ * @param array $response
+ * @param string $description
+ *
+ * @return DatabaseStatementInterface|int|null
+ */
+function wc_payment_save_transaction($response = array(), $data = array(), $site = "portal", $order_data = "", $order_status = "", $description = "", $log = "", $error_message = ""){
+  $update_data = array(
+    'tid' => wc_payment_prepare_data($response, "dc_transaction_id", "0"),
+    'transaction_date' => wc_payment_prepare_data($response, "dc_transaction_date", ""),
+    'response_code' => wc_payment_prepare_data($response, "dc_response_code", ""),
+    'response_notes' => wc_payment_prepare_data($response, "dc_notes", ""),
+    'amount' => wc_payment_prepare_data($response, "dc_capture_amount", 0.00),
+
+    'first_name' => wc_payment_prepare_data($data, "first_name", ""),
+    'last_name' => wc_payment_prepare_data($data, "last_name", ""),
+    'birthday' => wc_payment_prepare_data($data, "birthday", ""),
+    'email' => wc_payment_prepare_data($data, "email", ""),
+    'phone' => wc_payment_prepare_data($data, "phone", ""),
+    'company' => wc_payment_prepare_data($data, "company", ""),
+    'address' => wc_payment_prepare_data($data, "address", ""),
+    'city' => wc_payment_prepare_data($data, "city", ""),
+    'zip' => (int) wc_payment_prepare_data($data, "zip", 0),
+    'state' => wc_payment_prepare_data($data, "state", ""),
+    'shipping_first_name' => wc_payment_prepare_data($data, "shipping_first_name", ""),
+    'shipping_last_name' => wc_payment_prepare_data($data, "shipping_last_name", ""),
+    'shipping_company' => wc_payment_prepare_data($data, "shipping_company", ""),
+    'shipping_address' => wc_payment_prepare_data($data, "shipping_address", ""),
+    'shipping_city' => wc_payment_prepare_data($data, "shipping_city", ""),
+    'shipping_zip' => wc_payment_prepare_data($data, "shipping_zip", 0),
+    'shipping_state' => wc_payment_prepare_data($data, "shipping_state", ""),
+    'description' => $description,
+    'log' => $log,
+    'site' => $site,
+    'order_data' => $order_data,
+    'order_status' => $order_status,
+    'error' => $error_message,
+
+  );
+
+  $pid = db_insert('wc_payment_results')
+    ->fields($update_data)
+    ->execute();
+
+  return $pid;
+}
+
+
+/**
+ * Prepare data for before in database
+ *
+ * @param $response
+ * @param $key
+ * @param string $default_value
+ *
+ * @return string
+ */
+function wc_payment_prepare_data($response, $key, $default_value = ""){
+  return (isset($response[$key]) && !empty($response[$key])) ? $response[$key] : $default_value;
+}
+
+
+/**
+ * Prepare logs to save to database
+ * @param $response
+ * @return string
+ */
+function wc_payment_prepare_log($response){
+  $out = "";
+  foreach($response as $key => $value) {
+    if(!is_array($value) && !is_object($value)) {
+      $out .= $key .": " . $value . "\n";
+    }
+  }
+  return $out;
+}
+
+
+/**
+ * Implements hook_preprocess_theme().
+ */
+function wc_payment_preprocess_wc_payment_order(&$variables) {
+  $order = &$variables['order'];
+
+
+  $order['billing_data'] = array(
+    t('Transaction ID') => isset($order['tid']) ? $order['tid'] : "",
+    t('Transaction Date') => isset($order['transaction_date']) ? $order['transaction_date'] : "",
+    t('First Name') => isset($order['first_name']) ? $order['first_name'] : "",
+    t('Last Name') => isset($order['last_name']) ? $order['last_name'] : "",
+    t('Birthday') => isset($order['birthday']) ? $order['birthday'] : "",
+    t('Email') => isset($order['email']) ? $order['email'] : "",
+    t('Phone') => isset($order['phone']) ? $order['phone'] : "",
+    t('Company') => isset($order['company']) ? $order['company'] : "",
+    t('Address') => isset($order['address']) ? $order['address'] : "",
+    t('City') => isset($order['city']) ? $order['city'] : "",
+    t('State') => isset($order['state']) ? $order['state'] : "",
+    t('Zip') => isset($order['zip']) ? $order['zip'] : "",
+  );
+
+  $order['shipping_data'] = array(
+    t('First Name') => isset($order['shipping_first_name']) ? $order['shipping_first_name'] : "",
+    t('Last Name') => isset($order['shipping_last_name']) ? $order['shipping_last_name'] : "",
+    t('Company') => isset($order['shipping_company']) ? $order['shipping_company'] : "",
+    t('Address') => isset($order['shipping_address']) ? $order['shipping_address'] : "",
+    t('City') => isset($order['shipping_city']) ? $order['shipping_city'] : "",
+    t('State') => isset($order['shipping_state']) ? $order['shipping_state'] : "",
+    t('Zip') => isset($order['shipping_zip']) ? $order['shipping_zip'] : "",
+  );
+
+}
+
+
+/**
+ * Element value callback.
+ * Clean mask symbols from submitted value.
+ *
+ * @param $element
+ * @param bool $input
+ * @param $form_state
+ * @return string
+ */
+function wc_payment_masked_input_clean_mask_value($element, $input = FALSE, $form_state) {
+
+  if($input !== FALSE) {
+    $mask_definitions = wc_payment_masked_definitions();
+    $mask_symbols = array_keys($mask_definitions);
+    $mask_array = str_split($element['#mask']);
+    $input_array = str_split($input);
+    $input_cleaned = '';
+
+    foreach ($input_array as $delta => $input_char) {
+      if(isset($mask_array[$delta]) && !in_array($mask_array[$delta], $mask_symbols) && $mask_array[$delta] === $input_char) {
+        //skip mask chars
+      } else {
+        $input_cleaned .= $input_char;
+      }
+    }
+
+    return $input_cleaned;
+  }
+
+}
+
+/**
+ * Get all defined mask definitions
+ */
+function wc_payment_masked_definitions() {
+  return
+    array(
+      '9' => "[0-9]",
+      'a' => "[A-Za-z]",
+      '*' => "[A-Za-z0-9]"
+    ) + masked_input_get_configured_definitions();
+}

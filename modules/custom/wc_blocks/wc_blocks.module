@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Crescent base functionality
+ */
+
+module_load_include("inc", "wc_blocks", "includes/wc_blocks.blocks");
+
+
+
+/**
+ * Implements hook_theme().
+ */
+function wc_blocks_theme() {
+  $module_path = drupal_get_path('module', 'wc_blocks');
+  $base = array(
+    'path' => $module_path . "/templates",
+  );
+
+  return array(
+    'wc_blocks_brochure_block' => $base + array(
+      'variables' => array(
+        'brochure_link' => NULL,
+      ),
+      'template' => 'blocks/wc-blocks-brochure-block',
+    ),
+  );
+}
+

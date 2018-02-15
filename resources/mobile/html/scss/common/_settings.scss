@@ -1,0 +1,28 @@
+$icons: sprite-map('icons/*.png', $spacing: 8px, $layout: 'smart');
+//$h-sprites: sprite-map('h-sprites/*.png',$layout: 'vertical', $spacing: 8px);
+//$v-sprites: sprite-map('v-sprites/*.png', $layout: 'horizontal', $spacing: 8px);
+
+$experimental-support-for-svg: true;
+
+//width
+$width: 320px;
+
+//font-size
+$base_fs_em: 1em;
+$base_fs_px: 16px;
+
+//fonts
+$bitter-bold                 : 'bitterbold';
+$bitter-italic               : 'bitteritalic';
+$bitter-regular              : 'bitterregular';
+$copse-regular               : 'copseregular';
+$reverie-bold-italicBdIt     : 'reverie_bold_italicBdIt';
+$reverie-boldbold            : 'reverie_boldbold';
+$reverie-italicitalic        : 'reverie_italicitalic';
+$reverie-light_italicitalic  : 'reverie_light_italicitalic';
+$reverie-lightregular        : 'reverie_lightregular';
+$reverie-regular             : 'reverieregular';
+$tt-2                        : 'titilliumtext22llight';
+$tt-3                        : 'titilliumtext22l_rgregular';
+$tt-4                        : 'titilliumtext22l_ltmedium';
+$tt-6                        : 'titilliumtext22lxbold';

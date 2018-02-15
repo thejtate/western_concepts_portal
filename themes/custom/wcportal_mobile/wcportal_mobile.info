@@ -1,0 +1,24 @@
+name        = Wcportal Mobile theme
+description = Custom Western concepts portal mobile theme
+core        = 7.x
+
+
+
+stylesheets[all][] = css/styles.css
+stylesheets[all][] = css/custom.css
+
+scripts[] = js/lib/combobox.js
+scripts[] = js/lib/jquery.uniform.min.js
+scripts[] = js/lib/jquery.inputmask.bundle.js
+scripts[] = js/js.js
+scripts[] = js/custom.js
+
+
+
+regions[content] = Content
+regions[home_content] = Home page content
+
+regions[help] = Help
+regions[header] = Header
+regions[footer] = Footer
+

@@ -1,0 +1,16 @@
+#manager-access-admin-page-form table.sticky-header {
+  z-index: 100;
+}
+#manager-access-admin-page-form table td {
+  vertical-align: top;
+}
+#vmanager-access-admin-page-form .manager_access-customarea.form-textarea {
+  height: 24px;
+}
+
+fieldset.all.collapsed {
+  margin-bottom: 12px;
+}
+fieldset.all .form-type-checkbox {
+  height: 20px;
+}

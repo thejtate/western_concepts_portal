@@ -1,0 +1,297 @@
+<?php
+/**
+ * @file Wc ShushiNeko custom functionality
+ */
+define('TASTING_ROOM_CATEGORIES_VOCABULARY', 7);
+
+/**
+ * Implements hook_menu().
+ */
+function wc_events_menu() {
+  $items['admin/config/wc_events'] = array(
+    'title' => 'Wc Events Configuration',
+    'description' => 'Wc Events Configuration page',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wc_events_site_setings_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'wc_events.admin.inc',
+  );
+
+  $items['wc_events/get/%/%'] = array(
+    'title' => 'Events',
+    'page callback' => 'wc_events_get',
+    'page arguments' => array(2, 3),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['wc_events/get_single/%/%'] = array(
+    'title' => 'Events',
+    'page callback' => 'wc_events_get_single',
+    'page arguments' => array(2, 3),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['wc_events/calendar/get/%/%'] = array(
+    'title' => 'Events',
+    'page callback' => 'wc_events_calendar_get',
+    'page arguments' => array(3, 4),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['wc_events/tastingroom/categories'] = array(
+    'title' => 'Events',
+    'page callback' => 'wc_events_get_tastingroom_categories_callback',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/****************************************************************************************************************
+ * HOST
+ ****************************************************************************************************************/
+
+/**
+ * Menu callback, get single event with given restaurant.
+ *
+ * @param int $restaurant_id
+ *  Restaurant id
+ * @param int $nid
+ *  Event nid
+ */
+function wc_events_get_single($restaurant_id, $nid) {
+  $node = node_load((int) $nid);
+  if($node->type != 'event' || empty($node->field_event_restaurant['und'])) {
+    $node = FALSE;
+  } else {
+    $is_given_restaurant_type = FALSE;
+    foreach ($node->field_event_restaurant['und'] as $value) {
+      if($value['target_id'] == $restaurant_id) {
+        $is_given_restaurant_type = TRUE;
+        break;
+      }
+    }
+    if(!$is_given_restaurant_type) {
+      $node = FALSE;
+    }
+  }
+  drupal_json_output($node);
+}
+
+/**
+ * Menu callback, get events
+ *
+ * @param string $event_type
+ *  Restaurant taxonomy id
+ * @param int $count
+ */
+function wc_events_get($event_type = "", $count = 10) {
+  $output = _wc_events_get($event_type, $count);
+  drupal_json_output($output);
+}
+
+/**
+ * Menu callback, get events by conditions and categories for tasting room calendar
+ *
+ * @param string $event_type
+ *  Restaurant taxonomy id
+ * @param int $count
+ * @param string $event_date
+ *  Event date filter, available date formats: for year search "Y", for month search  "Y-m", for Day search  "Y-m-d"
+ *  Is used for thetastingroomokc.com calendar
+ * @param string $category
+ *  The tasting room categories tids
+ */
+function wc_events_calendar_get($event_type = "", $count = 10, $event_date = '', $category = '') {
+  $output = array();
+  $output['events'] = _wc_events_get($event_type, $count, $event_date, $category);
+  $output['tastingroom_categories'] = wc_events_get_tastingroom_categories();
+  drupal_json_output($output);
+
+}
+
+/**
+ * Get events array by filters.
+ */
+function _wc_events_get($event_type = "", $count = 10, $event_date = '', $category = '') {
+  $type = variable_get('wc_events_type', 0);
+  $events = array();
+  if ($type == 'host') {
+    $node_type = variable_get('wc_events_host_node_type', '');
+
+    $query = db_select('node', 'n')
+      ->fields('n', array('nid'))
+      ->condition('type', $node_type)
+      ->condition('status', 1);
+
+    $query->join('field_data_field_event_restaurant', 'r', 'r.entity_id = n.nid');
+    $query->fields('r', array('field_event_restaurant_target_id'));
+    $query->join('field_data_field_event_date_time', 'd','d.entity_id = n.nid');
+    $query->fields('d', array('field_event_date_time_value', 'delta'));
+
+    $query->condition('r.field_event_restaurant_target_id', $event_type);
+
+    $date_field_info = field_info_field('field_event_date_time');
+    $db_timezone_str = $date_field_info['settings']['timezone_db'];
+
+    if (!empty($event_date)) {
+      //display event for given date
+      module_load_include('inc', 'date_api', 'date_api_sql');
+      $date_handler = new date_sql_handler();
+      $field = $date_handler->sql_field('d.field_event_date_time_value');//get date field name with correction for current timezone
+      $query->where($field . " LIKE :event", array(':event' => $event_date . '%' ));
+    } else {
+      //display upcoming events
+      $date_now = new DateTime('now', new DateTimeZone($db_timezone_str));
+      $query->where('d.field_event_date_time_value > :now', array(':now' => $date_now->format(DATE_FORMAT_DATETIME)));
+    }
+
+    if(!empty($category)) {
+      $categories = explode(',', $category);
+      $query->join('field_data_field_event_tasting_category', 'c', 'c.entity_id = n.nid');
+      $query->condition('c.field_event_tasting_category_tid', $categories, 'IN');
+      $query->groupBy('n.nid')->groupBy('d.field_event_date_time_value');
+    }
+
+    $query->orderBy('d.field_event_date_time_value', 'ASC');
+
+    if ($count != 0) {
+      $query->range(0, $count);
+    }
+
+    drupal_alter("get_events_entities", $query, $event_type, $event_date);
+
+    $result = $query->execute()
+      ->fetchAll();
+
+    foreach ($result as $item) {
+      $node = node_load($item->nid);
+
+      $new_node = clone($node);
+      if(!empty($node->field_event_date_time[LANGUAGE_NONE])) {
+        //leave only One current date in node
+        $new_node->field_event_date_time[LANGUAGE_NONE] = array(
+          $new_node->field_event_date_time[LANGUAGE_NONE][$item->delta],
+        );
+      }
+      $events[] = $new_node;
+    }
+  }
+
+  return $events;
+}
+
+/**
+ * Get tastingroom categories.
+ * @return array
+ */
+function wc_events_get_tastingroom_categories() {
+  $efq = new EntityFieldQuery();
+
+  $result = $efq->entityCondition('entity_type', 'taxonomy_term')
+    ->propertyCondition('vid', TASTING_ROOM_CATEGORIES_VOCABULARY)
+    ->propertyOrderBy('weight')
+    ->execute();
+
+  $tids = !empty($result['taxonomy_term']) ? array_keys($result['taxonomy_term']) : array();
+  $terms = taxonomy_term_load_multiple($tids);
+  $categories = array();
+  foreach ($terms as $term) {
+    $categories[$term->tid] = $term->name;
+  }
+
+  return $categories;
+}
+
+/**
+ * Page callback. Get categories json.
+ */
+function wc_events_get_tastingroom_categories_callback() {
+  $output = array();
+  $type = variable_get('wc_events_type', 0);
+  if ($type == 'host') {
+    $output = wc_events_get_tastingroom_categories();
+  }
+  drupal_json_output($output);
+}
+
+/****************************************************************************************************************
+ * Client
+ ****************************************************************************************************************/
+
+/**
+ * Implements hook_block_info().
+ */
+function wc_events_block_info() {
+  $blocks['wc_events_events'] = array(
+    'info' => t('Last Events'),
+    'cache' => DRUPAL_CACHE_GLOBAL,
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function wc_events_block_view($delta = '') {
+  // Check if the current user has access.
+  switch ($delta) {
+    case 'wc_events_events':
+      $block['subject'] = t('Events');
+      $block['content'] = wc_events_custom_get_events();
+      return $block;
+      break;
+  }
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function wc_events_theme() {
+  $path = drupal_get_path('module', 'wc_events');
+  return array(
+    'wc_events_list' => array(
+      'variables' => array('content' => NULL),
+      'path' => $path . '/templates',
+      'template' => 'wc_events_list',
+    ),
+  );
+}
+
+
+function wc_events_custom_get_events() {
+  $host = variable_get('client_wc_events_host', '');
+  $event_type = variable_get('client_wc_events_type', 1);
+  $count = variable_get('client_wc_events_count', 2);
+  $trim = variable_get('client_wc_events_trim', 0);
+  $type = variable_get('wc_events_type', 0);
+  $content = "";
+  if ($type == 'host') {
+    return t("Module configured as host. Please choose 'client' type for use this block.");
+  }
+
+  if (!empty($host)) {
+    $url = rtrim($host, "/") . "/" . "wc_events/get/$event_type/$count";
+    $data = drupal_http_request($url);
+    if (isset($data->code) && $data->code == 200) {
+      $json = isset($data->data) ? $data->data : "[]";
+      $nodes = json_decode($json);
+      foreach ($nodes as $node) {
+        if (!empty($trim) && is_numeric($trim)) {
+          if(!empty($node->field_event_description->und[0]->value )) {
+            $text = strip_tags($node->field_event_description->und[0]->value);
+            $node->field_event_description->und[0]->value = truncate_utf8($text, $trim, FALSE, TRUE);
+          }
+        }
+        $content .= render(node_view($node, "events"));
+      }
+    }
+  }
+  return theme("wc_events_list", array("content" => $content));
+}

@@ -1,0 +1,93 @@
+<?php
+
+/**
+ * @file
+ * Manager access install
+ */
+
+/**
+ * Implements hook_install().
+ */
+function manager_access_install() {
+  $t = get_t();
+  variable_set('manager_access_settings', array());
+  $role = manager_access_add_role('manager');
+  $permissions = array(
+    'access manager links',
+    'access top manager menu',
+  );
+  if (isset($role->rid) && !empty($role->rid)) {
+    manager_access_add_permissions($role->rid, $permissions);
+  }
+
+  $menu = array(
+    'menu_name' => 'manager_menu',
+    'title' => $t('Manager menu'),
+    'description' => '',
+  );
+  menu_save($menu);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function manager_access_uninstall() {
+  variable_del('manager_access_settings');
+  // Remove permissions.
+  manager_access_del_permissions();
+  // Remove any roles we created.
+  user_role_delete('manager');
+  if ($manager_menu = menu_load('manager_menu')) {
+    menu_delete($manager_menu);
+  }
+}
+
+/**
+ * Add a new role
+ *
+ * @param string $machine_name
+ *   role name
+ * @param int $weight
+ *   role weight
+ */
+function manager_access_add_role($machine_name, $weight = 0) {
+  $role = new stdClass();
+  $role->name = $machine_name;
+  $role->weight = $weight;
+  user_role_save($role);
+  return user_role_load_by_name($machine_name);
+}
+
+/**
+ * manager_access_add_permissions() is a helper function to add permissions
+ * by role to the db
+ *
+ * @param int $rid
+ *   role id
+ * @param string $permissions
+ *   permissions string
+ */
+function manager_access_add_permissions($rid, $permissions) {
+  // Delete old permissions.
+  manager_access_del_permissions();
+
+  foreach ($permissions as $perm) {
+    db_insert('role_permission')
+        ->fields(array(
+          'rid' => $rid,
+          'permission' => $perm,
+          'module' => 'manager_access',
+        ))
+        ->execute();
+  }
+}
+
+/**
+ * manager_access_del_permissions() is a helper function to remove permissions
+ * by role.
+ */
+function manager_access_del_permissions() {
+  db_delete('role_permission')
+      ->condition('module', 'manager_access')
+      ->execute();
+}

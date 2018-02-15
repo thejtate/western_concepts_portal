@@ -1,0 +1,65 @@
+.sidebar-item .title-sidebar {
+  border-bottom: 1px solid #ccc9c2;
+  margin: 0 0 12px 0;
+}
+.sidebar-item .title-sidebar h3 {
+  font-size: 1.5em;
+  font-family: "copseregular";
+  font-weight: normal;
+  color: #1e1e1e;
+}
+.sidebar-item .item-list ul li {
+  margin: 0;
+}
+.sidebar-item .wrapper-list a {
+  color: #c7993e;
+  text-decoration: none;
+  font-size: 0.875em;
+  line-height: 24px;
+}
+.sidebar-item .wrapper-list .number {
+  color: #ccc9c2;
+}
+.sidebar-item .wrapper-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sidebar-item .wrapper-list ul ul {
+  margin-left: 16px;
+  display: none;
+}
+.sidebar-item .wrapper-list ul ul.active {
+  display: block;
+}
+.sidebar-item .wrapper-list.wrapper-list_tag ul {
+  margin-left: 0;
+}
+
+.btn-arrow {
+  display: inline-block;
+  width: 16px;
+  height: 24px;
+  position: relative;
+  cursor: pointer;
+  float: left;
+}
+.btn-arrow:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  margin-top: -6px;
+  border-left: 8px solid #ccc9c2;
+}
+.btn-arrow.active:before {
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  margin-top: -4px;
+  border-top: 8px solid #ccc9c2;
+}
